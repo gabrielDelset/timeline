@@ -1,25 +1,36 @@
-import logo from './logo.svg';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import './App.css';
+import { useEffect, useState } from 'react';
+
+// Importation des composants
+import Connexion from './pages/connexion'; // Assurez-vous que le fichier connexion existe
+import HomeScreen from './pages/home';
 
 function App() {
+  const [loggedIn, setLoggedIn] = useState(false); // État pour vérifier si l'utilisateur est connecté
+  const [email, setEmail] = useState('');
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div style={styles.container}>
+    <BrowserRouter>
+    <div style={{ backgroundColor: '#575757', minHeight: '100vh' }}>
+      {loggedIn ? (
+        <HomeScreen email={email} />
+      ) : (
+        <Connexion setLoggedIn={setLoggedIn} setEmail={setEmail} />
+      )}
+      </div>
+    </BrowserRouter>
     </div>
   );
 }
+
+
+const styles = {
+  container: {
+    backgroundColor: '#f9f9f9'
+  },
+};
+
 
 export default App;

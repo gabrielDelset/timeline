@@ -1,0 +1,63 @@
+/* Styles personnalisés pour la timeline */
+.vis-timeline {
+    background-color: #575757; /* Couleur de fond */
+    border: 1px solid #ccc; /* Bordure légère */
+    border-radius: 8px; /* Coins arrondis - corrigé */
+    color: #d63e3e; /* Couleur du texte - correction ici */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Ombre légère */
+  }
+  
+  .vis-item {
+    background-color: #18e218; /* Couleur de fond des items */
+    color: rgb(0, 0, 0); /* Texte en blanc */
+    border-radius: 4px; /* Coins arrondis */
+    padding: 4px 6px; /* Espacement interne */
+    font-size: 14px;
+  }
+  
+  .vis-item:hover {
+    background-color: #45a049; /* Changement de couleur au survol */
+    cursor: pointer;
+  }
+  
+  .vis-current-time {
+    background-color: red; /* Ligne de temps actuelle */
+  }
+  
+  .vis-time-axis .vis-text {
+    font-weight: bold; /* Texte des axes de temps */
+    color: #000000; /* Couleur du texte - correction ici */
+  }
+
+  .timelineWrapper {
+    position: relative; /* Assure un positionnement relatif pour les enfants */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    margin-top: 10%;
+  }
+  
+  .container {
+    width: 100%;
+    padding-top: 0;
+  }
+  
+  .buttonsWrapper {
+    position: absolute; /* Pour coller les boutons à la timeline */
+    bottom: -10px; /* Décale légèrement en bas de la timeline */
+    left: 50%; /* Centre horizontalement */
+    transform: translateX(-50%); /* Centre précis */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 90%;
+    background-color: rgba(255, 255, 255, 0.8); /* Optionnel : ajoute un fond */
+    padding: 10px; /* Pour l'espacement interne */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Optionnel : effet de surélévation */
+    border-radius: 8px; /* Optionnel : arrondit les coins */
+  }
+  
+
+  
+  
