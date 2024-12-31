@@ -9,7 +9,8 @@ const LoginPage = ({setLoggedIn, setEmail}) => {
   
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefault();  // Reset error message
+ 
     setErrorMessage(''); // Reset error message
 
     try {

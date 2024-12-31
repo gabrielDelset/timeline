@@ -46,6 +46,29 @@
     font-size: 14px;
     transition: background-color 0.3s ease;
   }
+
+  .tab-button-save {
+    background-color: rgb(31, 218, 78);
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+  }
+
+  .tab-button-delete {
+    background-color: rgb(165, 2, 2);
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+  }
+  
   
   .tab-button.active {
     background-color: #0056b3;

@@ -1,10 +1,12 @@
 import React, { useState, useRef, useEffect } from "react";
 import "../css/Popup.css";
 
-const Popup = ({ onClose }) => {
-  const [activeTab, setActiveTab] = useState("Tab1");
-  const popupRef = useRef(null);
+import { delete } from '../tools/API/api';
 
+const Popup = ({ onClose , item}) => {
+  const [activeTab, setActiveTab] = useState("Relation");
+  const popupRef = useRef(null);
+console.log(item);
   useEffect(() => {
     // Gestionnaire pour fermer la popup lorsqu'on clique en dehors
     const handleClickOutside = (event) => {
@@ -18,6 +20,33 @@ const Popup = ({ onClose }) => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [onClose]);
+
+
+
+
+  const handleDelete = async (e) => {
+    e.preventDefault();  // Reset error message
+ 
+    setErrorMessage(''); // Reset error message
+
+    try {
+      // Appel à l'API pour la connexion
+      const response = await connect(identifiant, motDePasse);
+
+      // Vérification si l'API renvoie un succès (code 200 par exemple)
+      if (response.code === 200) {
+        setLoggedIn(true);
+        setEmail(identifiant); // Mise à jour de l'état global avec l'identifiant
+      } else {
+        setErrorMessage('Identifiant ou mot de passe incorrect.');
+      }
+    } catch (error) {
+      console.error('Erreur lors de la connexion :', error);
+      setErrorMessage('Erreur de connexion. Veuillez réessayer.');
+    }
+  };
+
+
 
   return (
     <div className="popup-overlay">
@@ -47,6 +76,20 @@ const Popup = ({ onClose }) => {
           {activeTab === "résumé" && <p>Content for Résumé Tab</p>}
           {activeTab === "photo" && <p>Content for Photo Tab</p>}
         </div>
+        <div  className="popup-button">
+        <button 
+            className={`tab-button-delete ${activeTab === "Relation" ? "active" : ""}`}
+            onClick={() => setActiveTab("Relation")}
+          >
+            supprimé
+          </button>
+          <button
+            className={`tab-button-save ${activeTab === "Relation" ? "active" : ""}`}
+            onClick={() => setActiveTab("Relation")}
+          >
+            sauvegarder
+          </button>
+          </div>
       </div>
     </div>
   );
