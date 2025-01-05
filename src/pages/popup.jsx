@@ -1,11 +1,13 @@
 import React, { useState, useRef, useEffect } from "react";
 import "../css/Popup.css";
 
-import { delete } from '../tools/API/api';
+import { deletEevent } from '../tools/API/api';
 
-const Popup = ({ onClose , item}) => {
+const Popup = ({ onClose , item, onRefresh}) => {
+
   const [activeTab, setActiveTab] = useState("Relation");
   const popupRef = useRef(null);
+
 console.log(item);
   useEffect(() => {
     // Gestionnaire pour fermer la popup lorsqu'on clique en dehors
@@ -24,25 +26,14 @@ console.log(item);
 
 
 
-  const handleDelete = async (e) => {
-    e.preventDefault();  // Reset error message
- 
-    setErrorMessage(''); // Reset error message
-
+const handleDelete = async () => {   //permet de gérer la supression de l'événement
     try {
-      // Appel à l'API pour la connexion
-      const response = await connect(identifiant, motDePasse);
-
-      // Vérification si l'API renvoie un succès (code 200 par exemple)
-      if (response.code === 200) {
-        setLoggedIn(true);
-        setEmail(identifiant); // Mise à jour de l'état global avec l'identifiant
-      } else {
-        setErrorMessage('Identifiant ou mot de passe incorrect.');
-      }
+      console.log("Suppression de l'événement");
+      await deletEevent(item.id); 
+      onRefresh(); 
+      onClose(); 
     } catch (error) {
-      console.error('Erreur lors de la connexion :', error);
-      setErrorMessage('Erreur de connexion. Veuillez réessayer.');
+      console.error("Erreur lors de la suppression de l'événement:", error);
     }
   };
 
@@ -50,7 +41,9 @@ console.log(item);
 
   return (
     <div className="popup-overlay">
+   
       <div className="popup-container" ref={popupRef}>
+      <h1> {item.content} </h1>
         <div className="tabs-container">
           <button
             className={`tab-button ${activeTab === "Relation" ? "active" : ""}`}
@@ -76,15 +69,14 @@ console.log(item);
           {activeTab === "résumé" && <p>Content for Résumé Tab</p>}
           {activeTab === "photo" && <p>Content for Photo Tab</p>}
         </div>
-        <div  className="popup-button">
-        <button 
-            className={`tab-button-delete ${activeTab === "Relation" ? "active" : ""}`}
-            onClick={() => setActiveTab("Relation")}
+        <div className="button-container">
+        <button  class="button-74" 
+            onClick={handleDelete}
           >
             supprimé
           </button>
           <button
-            className={`tab-button-save ${activeTab === "Relation" ? "active" : ""}`}
+         className="button-74" 
             onClick={() => setActiveTab("Relation")}
           >
             sauvegarder
@@ -96,3 +88,8 @@ console.log(item);
 };
 
 export default Popup;
+
+
+
+
+

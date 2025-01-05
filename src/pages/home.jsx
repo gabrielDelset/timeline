@@ -101,10 +101,20 @@ const Home = () => {
     }
   };
 
-  const handleClosePopup = () => {
+  const handleClosePopup =  async() => {
     setIsPopupOpen(false);
     setSelectedItem(null);
   };
+
+  const refreshTimeline = async () => {
+    try {
+      const updatedTimeline = await getTimeline(); 
+      setResponse(updatedTimeline.data); 
+    } catch (error) {
+      console.error('Erreur lors de la mise à jour de la timeline:', error);
+    }
+  };
+  
 
 
   return (
@@ -166,7 +176,7 @@ const Home = () => {
         </div>
       </div>
       {isPopupOpen && selectedItem && (
-        <PopupScreen onClose={handleClosePopup} item={selectedItem} />
+         <PopupScreen onClose={handleClosePopup} item={selectedItem} onRefresh={refreshTimeline} />
       )}
     </div>
   );

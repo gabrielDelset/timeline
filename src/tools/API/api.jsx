@@ -59,9 +59,10 @@ export const postevenement = async (name,start) => {
 /******************************** Popup ********************************************************** */
 
 
-export const deletEevent = async (name,start) => {
+export const deletEevent = async (id) => {
   try {
-    const response = await api.put('/timeline/deletEvent', { id});
+    const response = await api.put('/timeline/deleteEvent', {id});
+    console.log(id)
     return response.data;
   } catch (error) {
     console.error(error);

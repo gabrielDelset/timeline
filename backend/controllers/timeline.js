@@ -70,9 +70,30 @@ const getinfos = async (req, res) => {    // on utilise une async car on fait to
     }
 };
 
+
+const deleteEvenement = async (req, res) => {
+    const id = req.body.id;
+    console.log(req.body);
+    console.log(id);
+    try {
+        // Exécuter la requête pour insérer les données
+        const result = await pool.query(
+            `DELETE FROM timeline WHERE id = $1;`,
+            [id]
+        );
+        return res.status(200).send({ message: 'Événement supprimé avec succès' });
+    } catch (error) {
+        console.error('Erreur lors de la supression dans timeline', error);
+        res.status(500).send({ error: 'Erreur lors de la supression' });
+    }
+};
+
+
+
 // Exporter les fonctions
 module.exports = {
     getinfos,
     puttimelineArc,
     puttimelineEvenement,
+    deleteEvenement,
 };
