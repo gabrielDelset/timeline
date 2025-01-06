@@ -3,6 +3,7 @@ import { Timeline, DataSet } from 'vis-timeline/standalone';
 import 'vis-timeline/styles/vis-timeline-graph2d.css'; // Import des styles par défaut
 import '../css/Home.css'; // Import de ton fichier CSS personnalisé
 import PopupScreen from './popup';
+import PopupCreateScreen from './popupcreateevent';
 import { getTimeline, postarc, postevenement } from '../tools/API/api';
 
 const styles = {
@@ -31,6 +32,9 @@ const Home = () => {
 
   const [selectedItem, setSelectedItem] = useState(null); // Pour stocker l'élément sélectionné
   const [isPopupOpen, setIsPopupOpen] = useState(false); // Contrôle de la popup
+  
+  const [isPopupCreateOpen, setisPopupCreateOpen] = useState(false); // Contrôle de la popup d'ajout d'événement
+
 
   useEffect(() => {
     const fetchData = async () => {
@@ -64,6 +68,15 @@ const Home = () => {
       }
     });
 
+
+
+        // Gestion de l'événement "doubleClick"
+      timeline.on('doubleClick', (event) => {
+        // Vérifiez que le double-clic ne concerne pas un élément existant
+        if (!event.item) {
+          setisPopupCreateOpen(true); // Ouvrir la popupde création de popup
+        }
+      });
 
 
     // Ajuste dynamiquement la hauteur de la timeline
@@ -103,6 +116,7 @@ const Home = () => {
 
   const handleClosePopup =  async() => {
     setIsPopupOpen(false);
+    setisPopupCreateOpen(false);
     setSelectedItem(null);
   };
 
@@ -124,62 +138,18 @@ const Home = () => {
           ref={container}
           style={{ ...styles.container, height: `${timelineHeight}px` }}
         />
-        <div style={styles.buttonsWrapper}>
-          <div style={{ marginBottom: '20px' }}>
-            <h1>Ajout d'un arc</h1>
-            <button style={{ padding: '10px 20px', marginRight: '10px' }} onClick={handleAddArc}>
-              Ajouter
-            </button>
-            <input
-              type="text"
-              placeholder="Nom"
-              style={{ padding: '5px', marginRight: '10px' }}
-              value={arcData.name}
-              onChange={(e) => setArcData({ ...arcData, name: e.target.value })}
-            />
-            <input
-              type="date"
-              placeholder="Début"
-              style={{ padding: '5px', marginRight: '10px' }}
-              value={arcData.start}
-              onChange={(e) => setArcData({ ...arcData, start: e.target.value })}
-            />
-            <input
-              type="date"
-              placeholder="Fin"
-              style={{ padding: '5px' }}
-              value={arcData.end}
-              onChange={(e) => setArcData({ ...arcData, end: e.target.value })}
-            />
-          </div>
-
-          <div>
-            <h1>Ajout d'un événement</h1>
-            <button style={{ padding: '10px 20px', marginRight: '10px' }} onClick={handleAddEvent}>
-              Ajouter
-            </button>
-            <input
-              type="text"
-              placeholder="Nom"
-              style={{ padding: '5px', marginRight: '10px' }}
-              value={eventData.name}
-              onChange={(e) => setEventData({ ...eventData, name: e.target.value })}
-            />
-            <input
-              type="date"
-              placeholder="Début"
-              style={{ padding: '5px', marginRight: '10px' }}
-              value={eventData.start}
-              onChange={(e) => setEventData({ ...eventData, start: e.target.value })}
-            />
-          </div>
-        </div>
       </div>
       {isPopupOpen && selectedItem && (
          <PopupScreen onClose={handleClosePopup} item={selectedItem} onRefresh={refreshTimeline} />
       )}
+
+        {isPopupCreateOpen && (
+         <PopupCreateScreen onClose={handleClosePopup} item={selectedItem} onRefresh={refreshTimeline} />
+      )}
     </div>
   );
+
+  
 };
 
 export default Home;
