@@ -10,6 +10,7 @@ const styles = {
   container: {
     width: '100%',
     paddingtop: '500px',
+    height: '100%', // 25% de la hauteur de l'écran
   },
   timelineWrapper: {
     marginTop: '10%',
@@ -17,6 +18,7 @@ const styles = {
     flexDirection: 'column',
     alignItems: 'center',
     width: '100%',
+    height: '100vh', // 25% de la hauteur de l'écran
   },
   buttonsWrapper: {
     width: '90%',
@@ -26,8 +28,6 @@ const styles = {
 const Home = () => {
   const container = useRef(null);
   const [response, setResponse] = useState('');
-  const [arcData, setArcData] = useState({ name: '', start: '', end: '' });
-  const [eventData, setEventData] = useState({ name: '', start: '' });
   const [timelineHeight, setTimelineHeight] = useState(window.innerHeight / 2); // Hauteur dynamique de la timeline
 
   const [selectedItem, setSelectedItem] = useState(null); // Pour stocker l'élément sélectionné
@@ -94,26 +94,6 @@ const Home = () => {
   
 
   
-  const handleAddArc = async () => {
-    try {
-      await postarc(arcData.name, arcData.start, arcData.end);
-      const updatedTimeline = await getTimeline();
-      setResponse(updatedTimeline.data);
-    } catch (error) {
-      console.error('Erreur lors de l’ajout de l’arc:', error);
-    }
-  };
-
-  const handleAddEvent = async () => {
-    try {
-      await postevenement(eventData.name, eventData.start);
-      const updatedTimeline = await getTimeline();
-      setResponse(updatedTimeline.data);
-    } catch (error) {
-      console.error('Erreur lors de l’ajout de l’événement:', error);
-    }
-  };
-
   const handleClosePopup =  async() => {
     setIsPopupOpen(false);
     setisPopupCreateOpen(false);
@@ -136,7 +116,7 @@ const Home = () => {
       <div style={styles.timelineWrapper}>
         <div
           ref={container}
-          style={{ ...styles.container, height: `${timelineHeight}px` }}
+          style={{ ...styles.container, height: `100px` }}
         />
       </div>
       {isPopupOpen && selectedItem && (

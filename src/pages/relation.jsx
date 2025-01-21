@@ -1,128 +1,97 @@
+import React, { useEffect, useRef } from "react";
+import { Network } from "vis-network/standalone";
+import "vis-network/styles/vis-network.css";
+import "../css/Popup.css";
 
+const Relation = () => {
+  const networkRef = useRef(null);
 
-
-
-var nodes = null;
-var edges = null;
-var network = null;
-
-var DIR = "../img/refresh-cl/";
-var EDGE_LENGTH_MAIN = 150;
-var EDGE_LENGTH_SUB = 50;
-
-// Called when the Visualization API is loaded.
-function draw() {
-  // Create a data table with nodes.
-  nodes = [];
-
-  // Create a data table with links.
-  edges = [];
-
-  nodes.push({
-    id: 1,
-    label: "Main (top-left)",
-    image: DIR + "Network-Pipe-icon.png",
-    shape: "image",
-  });
-  nodes.push({
-    id: 2,
-    label: "Office (top-left)",
-    image: DIR + "Network-Pipe-icon.png",
-    shape: "image",
-  });
-  nodes.push({
-    id: 3,
-    label: "Wireless (top-left)",
-    image: DIR + "Network-Pipe-icon.png",
-    shape: "image",
-  });
-  edges.push({ from: 1, to: 2, length: EDGE_LENGTH_MAIN });
-  edges.push({ from: 1, to: 3, length: EDGE_LENGTH_MAIN });
-
-  for (var i = 4; i <= 7; i++) {
-    nodes.push({
-      id: i,
-      label: "Computer (top-left)",
-      image: DIR + "Hardware-My-Computer-3-icon.png",
-      shape: "circularImage",
-    });
-    edges.push({ from: 2, to: i, length: EDGE_LENGTH_SUB });
-  }
-
-  nodes.push({
-    id: 101,
-    label: "Printer (top-left)",
-    image: DIR + "Hardware-Printer-Blue-icon.png",
-    shape: "circularImage",
-  });
-  edges.push({ from: 2, to: 101, length: EDGE_LENGTH_SUB });
-
-  nodes.push({
-    id: 102,
-    label: "Laptop (center)",
-    image: DIR + "Hardware-Laptop-1-icon.png",
-    shape: "circularImage",
-    shapeProperties: {
-      useImageSize: true,
-      useBorderWithImage: false,
-      interpolation: false,
-      coordinateOrigin: "center",
-    },
-  });
-  edges.push({ from: 3, to: 102, length: EDGE_LENGTH_SUB });
-
-  nodes.push({
-    id: 103,
-    label: "Network drive (top-left)",
-    image: DIR + "Network-Drive-icon.png",
-    shape: "circularImage",
-  });
-  edges.push({ from: 1, to: 103, length: EDGE_LENGTH_SUB });
-
-  nodes.push({
-    id: 104,
-    label: "Internet (top-left)",
-    image: DIR + "System-Firewall-2-icon.png",
-    shape: "circularImage",
-  });
-  edges.push({ from: 1, to: 104, length: EDGE_LENGTH_SUB });
-
-  for (var i = 200; i <= 201; i++) {
-    nodes.push({
-      id: i,
-      label: "Smartphone (center)",
-      image: DIR + "Hardware-My-PDA-02-icon.png",
-      shape: "circularImage",
-      shapeProperties: {
-        useImageSize: true,
-        useBorderWithImage: false,
-        interpolation: false,
-        coordinateOrigin: "center",
+  useEffect(() => {
+    const DIR = "../img/indonesia/";
+    const nodes = [
+      { id: 1, shape: "circularImage", image: DIR + "1.png" },
+      { id: 2, shape: "circularImage", image: DIR + "2.png" },
+      { id: 3, shape: "circularImage", image: DIR + "3.png" },
+      {
+        id: 4,
+        shape: "circularImage",
+        image: DIR + "4.png",
+        label: "pictures by this guy!",
       },
-    });
-    edges.push({ from: 3, to: i, length: EDGE_LENGTH_SUB });
-  }
-
-  // create a network
-  var container = document.getElementById("mynetwork");
-  var data = {
-    nodes: nodes,
-    edges: edges,
-  };
-  var options = {
-    nodes: {
-      size: 30,
-      shapeProperties: {
-        useImageSize: true,
-        useBorderWithImage: false,
-        interpolation: false,
-        coordinateOrigin: "top-left",
+      { id: 5, shape: "circularImage", image: DIR + "5.png", label: "gabriel delset", },
+      { id: 6, shape: "circularImage", image: DIR + "6.png" },
+      { id: 7, shape: "circularImage", image: DIR + "7.png" },
+      { id: 8, shape: "circularImage", image: DIR + "8.png" },
+      { id: 9, shape: "circularImage", image: DIR + "9.png" },
+      { id: 10, shape: "circularImage", image: DIR + "10.png" },
+      { id: 11, shape: "circularImage", image: DIR + "11.png" },
+      { id: 12, shape: "circularImage", image: DIR + "12.png" },
+      { id: 13, shape: "circularImage", image: DIR + "13.png" },
+      { id: 14, shape: "circularImage", image: DIR + "14.png" },
+      {
+        id: 15,
+        shape: "circularImage",
+        image: DIR + "missing.png",
+        brokenImage: DIR + "missingBrokenImage.png",
+        label: "when images\nfail\nto load",
       },
-    },
-  };
-  network = new vis.Network(container, data, options);
-}
+      {
+        id: 16,
+        shape: "circularImage",
+        image: DIR + "anotherMissing.png",
+        brokenImage: DIR + "9.png",
+        label: "fallback image in action",
+      },
+    ];
 
-window.addEventListener("load", () => {
-  draw();
-});
+    const edges = [
+      { from: 1, to: 16 , color: { color: "red" }},
+      { from: 1, to: 3 },
+      { from: 1, to: 3 },
+      { from: 1, to: 3},
+      { from: 1, to: 10 },
+      { from: 1, to: 6 },
+      { from: 1, to: 7 },
+      { from: 1, to: 8 },
+      { from: 1, to: 9 },
+      { from: 2, to: 10 },
+      { from: 1, to: 11 },
+      { from: 1, to: 12 },
+      { from: 1, to: 13 },
+      { from: 1, to: 14 },
+      { from: 2, to: 16 },
+    ];
+
+    const data = {
+      nodes: nodes,
+      edges: edges,
+    };
+
+    const options = {
+      nodes: {
+        borderWidth: 4,
+        size: 30,
+        color: {
+          border: "#222222",
+          background: "#666666",
+        },
+        font: { color: "#c51717" },
+      },
+      edges: {
+        color: "lightgray",
+      },
+    };
+
+    const container = networkRef.current;
+    new Network(container, data, options);
+  }, []);
+
+  return(
+
+    <div id="mynetwork" ref={networkRef} style={{ width: "100%", height: "550px", border: "1px solid lightgray" }}></div>
+
+  )
+ 
+};
+
+export default Relation;

@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 // Importation des composants
 import Connexion from './pages/connexion'; // Assurez-vous que le fichier connexion existe
 import HomeScreen from './pages/home';
+//import HomeScreen from './pages/description';
 
 function App() {
   const [loggedIn, setLoggedIn] = useState(false); // État pour vérifier si l'utilisateur est connecté

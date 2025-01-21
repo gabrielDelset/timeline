@@ -80,7 +80,9 @@
   
   /* Content inside the popup */
   .popup-content {
-    margin: auto;
+    height: 100%;
+    width: 100%;
+    margin: 12px;
     font-size: 16px;
     text-align: center;
     flex-direction: column;
@@ -123,6 +125,22 @@
   }
 }
 
+.editor-container {
+  max-height: 450px; /* Limite de hauteur maximale */
+  height: 450px;
+  overflow-y: auto;  /* Barre de défilement verticale si le contenu dépasse */
+  border: 1px solid #ccc; /* Optionnel : pour un style de bordure */
+  padding: 10px; /* Pour un peu d'espacement intérieur */
+  background-color: #fff; /* Couleur de fond */
+}
+.relation-container {
+  max-height: 500px; /* Limite de hauteur maximale */
+  height: 500px;
+  overflow-y: auto;  /* Barre de défilement verticale si le contenu dépasse */
+  border: 1px solid #ccc; /* Optionnel : pour un style de bordure */
+  padding: 10px; /* Pour un peu d'espacement intérieur */
+  background-color: #fff; /* Couleur de fond */
+}
 
 
 
@@ -134,3 +152,78 @@
   gap: 15px; 
 }
 
+.divGlobal{
+border: "1px solid white";
+padding: "10px";
+}
+
+.divButton{
+  display: flex;
+  flex-direction: row; 
+  justify-content: left; 
+  align-items: center; 
+  gap: 10px; 
+  margin: 3px;
+  }
+  
+  
+  /* CSS */
+  .button-45 {
+    align-items: center;
+    background-color: #FFE7E7;
+    background-position: 0 0;
+    border: 1px solid #FEE0E0;
+    border-radius: 11px;
+    box-sizing: border-box;
+    color: #D33A2C;
+    cursor: pointer;
+    display: flex;
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 33.4929px;
+    list-style: outside url(https://www.smashingmagazine.com/images/bullet.svg) none;
+    padding: 2px 12px;
+    text-align: left;
+    text-decoration: none;
+    text-shadow: none;
+    text-underline-offset: 1px;
+    transition: border .2s ease-in-out,box-shadow .2s ease-in-out;
+    user-select: none;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+    white-space: nowrap;
+    word-break: break-word;
+  }
+  
+  .button-45:active,
+  .button-45:hover,
+  .button-45:focus {
+    outline: 0;
+  }
+  
+  
+  .button-45:active {
+    background-color: #D33A2C;
+    box-shadow: rgba(0, 0, 0, 0.12) 0 1px 3px 0 inset;
+    color: #FFFFFF;
+  }
+  
+  .button-45:hover {
+    background-color: #FFE3E3;
+    border-color: #FAA4A4;
+  }
+  
+  .button-45:active:hover,
+  .button-45:focus:hover,
+  .button-45:focus {
+    background-color: #D33A2C;
+    box-shadow: rgba(0, 0, 0, 0.12) 0 1px 3px 0 inset;
+    color: #FFFFFF;
+  }
+
+  .button-container-save {
+    display: flex;
+    justify-content: flex-start; /* Aligne le contenu à gauche */
+    margin-top: 10px; /* Pour espacer du contenu précédent */
+  }
+  

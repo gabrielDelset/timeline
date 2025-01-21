@@ -7,6 +7,8 @@ const cors = require('cors');
 
 const ConnexionScreen = require('./routes/connexion');
 const TimelineScreen = require('./routes/timeline');
+const PopupScreen = require('./routes/popup');
+const ImageScreen = require('./routes/image');
 
 
 const app = express();
@@ -17,6 +19,8 @@ app.use(cors());
 
 app.use('/connexion', ConnexionScreen);
 app.use('/timeline', TimelineScreen);
+app.use('/popup', PopupScreen);
+app.use('/image', ImageScreen);
 
 
 app.get('/', (req, res) => {

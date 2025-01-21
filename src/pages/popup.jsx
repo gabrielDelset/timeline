@@ -1,5 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import "../css/Popup.css";
+import Descriptionpage from './description';
+import Relationionpage from './relation';
 
 import { deletEevent } from '../tools/API/api';
 
@@ -53,7 +55,7 @@ const handleDelete = async () => {   //permet de gérer la supression de l'évé
           </button>
           <button
             className={`tab-button ${activeTab === "résumé" ? "active" : ""}`}
-            onClick={() => setActiveTab("résumé")}
+            onClick={() => setActiveTab("Résumé")}
           >
             Résumé
           </button>
@@ -65,15 +67,15 @@ const handleDelete = async () => {   //permet de gérer la supression de l'évé
           </button>
         </div>
         <div className="popup-content">
-          {activeTab === "Relation" && <p>Content for Relation Tab</p>}
-          {activeTab === "résumé" && <p>Content for Résumé Tab</p>}
+          {activeTab === "Relation" && <Relationionpage item={item}/>}
+          {activeTab === "Résumé" && <Descriptionpage item={item} />}
           {activeTab === "photo" && <p>Content for Photo Tab</p>}
         </div>
         <div className="button-container">
         <button  class="button-74" 
             onClick={handleDelete}
           >
-            supprimé
+            supprimé l'événement
           </button>
           <button
          className="button-74" 

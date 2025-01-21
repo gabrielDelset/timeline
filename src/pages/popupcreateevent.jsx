@@ -70,14 +70,9 @@ console.log(item);
   };
 
 
-
-
-
-
+  
   return (
     <div className="popup-overlay">
-        
-   
       <div className="popup-container" ref={popupRef}>
       <h1> page d'ajout d'événement </h1>
       <div style={styles.buttonsWrapper}>

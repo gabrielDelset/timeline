@@ -69,3 +69,27 @@ export const deletEevent = async (id) => {
     throw error;
   }
 };
+
+/******************************** Description ********************************************************** */
+
+export const insertJSon = async (table,column,id,json) => {
+  try {
+    const response = await api.put('/popup/insertJSon', {table,column,id,json});
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+export const getJson = async (table,column,id,json) => {
+  try {
+    const response = await api.put('/popup/getJson', {table,column,id});
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+
