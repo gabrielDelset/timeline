@@ -1,0 +1,203 @@
+.column-caracter {
+    max-height: 500px;
+    height: 500px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    gap: 10px;
+    padding-left: 0;
+    margin-left: 0;
+    border: 1px solid #ccc;
+    width: max-content;
+    overflow-y: auto; /* Active le défilement */
+    
+    /* Masquer la barre de défilement sur Firefox */
+    scrollbar-width: none;
+}
+
+/* Masquer la barre de défilement sur Chrome, Edge et Safari */
+.column-caracter::-webkit-scrollbar {
+    display: none;
+}
+
+.fenetre {
+    max-height: 500px; /* Limite de hauteur maximale */
+    height: 500px;
+    border: 1px solid #ccc; /* Optionnel : pour un style de bordure */
+    width: 99%;
+
+}
+
+
+/* General button style */
+.btn {
+    border: none;
+    font-family: 'Lato';
+    font-size: inherit;
+    color: inherit;
+    background: none;
+    cursor: pointer;
+    padding: 25px 80px;
+    display: inline-block;
+    margin: 15px 30px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 700;
+    outline: none;
+    position: relative;
+    -webkit-transition: all 0.3s;
+    -moz-transition: all 0.3s;
+    transition: all 0.3s;
+  }
+  
+  .btn:after {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    -webkit-transition: all 0.3s;
+    -moz-transition: all 0.3s;
+    transition: all 0.3s;
+  }
+  
+  /* Pseudo elements for icons */
+  .btn:before {
+    font-family: 'FontAwesome';
+    speak: none;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+    position: relative;
+    -webkit-font-smoothing: antialiased;
+  }
+  
+  
+  /* Icon separator */
+  .btn-sep {
+    padding: 12px 30px 12px 60px;
+  }
+  
+  .btn-sep:before {
+    background: rgba(0,0,0,0.15);
+  }
+  
+
+
+  /* Button 3 */
+  .btn-3 {
+    background: #e74c3c;
+    color: #fff;
+  }
+  
+  .btn-3:hover {
+    background: #c0392b;
+  }
+  
+  .btn-3:active {
+    background: #c0392b;
+    top: 2px;
+  }
+  
+  .btn-3:before {
+    position: absolute;
+    height: 100%;
+    left: 0;
+    top: 0;
+    line-height: 3;
+    font-size: 140%;
+    width: 60px;
+  }
+  
+  /* Button 3 */
+ 
+  /* Icons */
+  
+  .icon-cart:before {
+    content: "\f07a";
+  }
+  
+  .icon-heart:before {
+    content: "\f55a";
+  }
+  
+  .icon-info:before {
+    content: "\f05a";
+  }
+  
+  .icon-send:before {
+    content: "\f1d8";
+  }
+
+
+  .container {
+    background-color: black;
+    padding: 0 22px;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+  }
+  
+  .view {
+    margin: 0 12px;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+  }
+  
+  .button {
+    position: absolute;
+    left: 0;
+  }
+  
+  .imageContainer {
+    display: flex;
+    align-items: center;
+    margin: 22px 0;
+  }
+  
+  .image, .imagePlaceholder {
+    height: 170px;
+    width: 170px;
+    border-radius: 85px;
+    border: 2px solid black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .placeholderText {
+    color: white;
+  }
+  
+  .title {
+    font-size: 25px;
+    color: white;
+  }
+  
+  .icon {
+    position: absolute;
+    bottom: 0;
+    right: 10px;
+    z-index: 9999;
+  }
+  
+  .text {
+    font-size: 18px;
+    color: white;
+  }
+  
+  .item {
+    height: 44px;
+    width: 100%;
+    border: 1px solid #777676;
+    border-radius: 4px;
+    margin: 6px 0;
+    display: flex;
+    justify-content: center;
+    padding-left: 8px;
+  }
+  

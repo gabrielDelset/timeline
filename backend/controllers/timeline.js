@@ -6,16 +6,21 @@ const { dbConfig } = require('../bddinfo/info'); // Importation du fichier de co
 const pool = new Pool(dbConfig);
 
 const getinfos = async (req, res) => {    // on utilise une async car on fait torner le code en arriére plan 
+
+    const user = req.body.user;
+    const table = req.body.table;
+
     try {
-      // Attente du résultat de la requête
-      const result = await pool.query(`SELECT 
-                                        id, 
-                                        content, 
-                                        TO_CHAR("start", 'YYYY-MM-DD') AS start, 
-                                        TO_CHAR("end", 'YYYY-MM-DD') AS end
-                                    FROM timeline;
-                                    `);            // le await permet d'attendre la réponse
-      console.log(result.rows); 
+
+const query =`SELECT 
+                     id, 
+                     content, 
+                      TO_CHAR("start", 'YYYY-MM-DD') AS start, 
+                      TO_CHAR("end", 'YYYY-MM-DD') AS end
+                      FROM timeline
+                      WHERE $1 = ANY("user")
+                       AND timeline_name = $2; `
+    const result = await pool.query(query, [user, table]);
       res.send({ data: result.rows });
     } catch (error) {
       console.error('Erreur lors de la récupération des données :', error);
@@ -23,19 +28,24 @@ const getinfos = async (req, res) => {    // on utilise une async car on fait to
     }
   };
 
-  const puttimelineEvenement = async (req, res) => {
+
+  const puttimelineEvenement = async (req, res) => {     //! bon bah apparament j'ai jamais eu besoin de l'utiliser celle la a voir ce que j'en fait 
     const name = req.body.name;
     const start = req.body.start;
+    const email = req.body.email;
+    const table = req.body.table;
 
-
-    console.log(name);
-    console.log(start);
+    console.log(req.body);
+    console.log(req.body.email);
+    console.log('name',name);
+    console.log('email',email);
+    console.log('table',table);
 
     try {
         // Exécuter la requête pour insérer les données
         const result = await pool.query(
-            `INSERT INTO timeline (content, start) VALUES ($1, $2) RETURNING *;`,
-            [name, start]
+            `INSERT INTO timeline (content, start, user , timeline_name) VALUES ($1, $2, $3, $4) RETURNING *;`,
+            [name, start, email,table ]
         );
 
         // Envoyer les données insérées comme réponse
@@ -50,16 +60,17 @@ const getinfos = async (req, res) => {    // on utilise une async car on fait to
     const name = req.body.name;
     const start = req.body.start;
     const end = req.body.end;
+    const email = req.body.email;
+    const tabemail = [email]
+    const table = req.body.table;
 
-    console.log(name);
-    console.log(start);
-    console.log(end);
-
+    console.log(email)
+    console.log(tabemail)
     try {
         // Exécuter la requête pour insérer les données
         const result = await pool.query(
-            `INSERT INTO timeline (content, start, "end") VALUES ($1, $2, $3) RETURNING *;`,
-            [name, start, end]
+            `INSERT INTO timeline (content, start, "end" , "user", timeline_name) VALUES ($1, $2, $3 ,$4 , $5) RETURNING *;`,
+            [name, start, end,tabemail,table  ]
         );
 
         // Envoyer les données insérées comme réponse
@@ -97,3 +108,15 @@ module.exports = {
     puttimelineEvenement,
     deleteEvenement,
 };
+
+
+
+
+/* commande pour calculer la taille cela sera utile pour les utilisateurs 
+
+SELECT 
+    SUM(pg_column_size(t)) AS total_size_bytes
+FROM timeline t
+WHERE image IS NULL;
+
+*/

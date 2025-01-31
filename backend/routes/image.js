@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { insertImage, getImage} = require('../controllers/popup'); // Correctement importé
+const { insertImage, getImage} = require('../controllers/image'); // Correctement importé
 
 
 router.put('/putimage', insertImage); 

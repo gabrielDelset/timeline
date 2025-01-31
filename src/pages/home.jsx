@@ -4,7 +4,7 @@ import 'vis-timeline/styles/vis-timeline-graph2d.css'; // Import des styles par 
 import '../css/Home.css'; // Import de ton fichier CSS personnalisé
 import PopupScreen from './popup';
 import PopupCreateScreen from './popupcreateevent';
-import { getTimeline, postarc, postevenement } from '../tools/API/api';
+import { getTimeline } from '../tools/API/api';
 
 const styles = {
   container: {
@@ -18,28 +18,28 @@ const styles = {
     flexDirection: 'column',
     alignItems: 'center',
     width: '100%',
-    height: '100vh', // 25% de la hauteur de l'écran
+    height: '100vh', //* 25% de la hauteur de l'écran
   },
   buttonsWrapper: {
     width: '90%',
   },
 };
 
-const Home = () => {
+const Home = (email) => {
   const container = useRef(null);
-  const [response, setResponse] = useState('');
-  const [timelineHeight, setTimelineHeight] = useState(window.innerHeight / 2); // Hauteur dynamique de la timeline
+  const table = useRef('table1');                                            //! a modifier plus tard mais voila ça fait le taff
 
-  const [selectedItem, setSelectedItem] = useState(null); // Pour stocker l'élément sélectionné
-  const [isPopupOpen, setIsPopupOpen] = useState(false); // Contrôle de la popup
-  
-  const [isPopupCreateOpen, setisPopupCreateOpen] = useState(false); // Contrôle de la popup d'ajout d'événement
+  const [response, setResponse] = useState('');
+  const [timelineHeight, setTimelineHeight] = useState(window.innerHeight / 2); 
+  const [selectedItem, setSelectedItem] = useState(null); 
+  const [isPopupOpen, setIsPopupOpen] = useState(false); 
+  const [isPopupCreateOpen, setisPopupCreateOpen] = useState(false); 
 
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await getTimeline();
+        const response = await getTimeline(email.email,table.current);
         setResponse(response.data);
       } catch (error) {
         console.error('Erreur lors de la récupération de la timeline:', error);
@@ -63,8 +63,8 @@ const Home = () => {
       const selectedId = event.items[0]; // ID de l'élément sélectionné
       if (selectedId) {
         const selectedData = response.find((item) => item.id === selectedId);
-        setSelectedItem(selectedData); // Mettre à jour les données de l'élément sélectionné
-        setIsPopupOpen(true); // Ouvrir la popup
+        setSelectedItem(selectedData);      // Mettre à jour les données de l'élément sélectionné
+        setIsPopupOpen(true);             // Ouvrir la popup
       }
     });
 
@@ -102,7 +102,7 @@ const Home = () => {
 
   const refreshTimeline = async () => {
     try {
-      const updatedTimeline = await getTimeline(); 
+      const updatedTimeline = await getTimeline(email.email,table.current); 
       setResponse(updatedTimeline.data); 
     } catch (error) {
       console.error('Erreur lors de la mise à jour de la timeline:', error);
@@ -124,7 +124,7 @@ const Home = () => {
       )}
 
         {isPopupCreateOpen && (
-         <PopupCreateScreen onClose={handleClosePopup} item={selectedItem} onRefresh={refreshTimeline} />
+         <PopupCreateScreen onClose={handleClosePopup} item={selectedItem} email={email.email} table={table.current} onRefresh={refreshTimeline} />
       )}
     </div>
   );

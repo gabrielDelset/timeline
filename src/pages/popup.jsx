@@ -81,7 +81,7 @@ const handleDelete = async () => {   //permet de gérer la supression de l'évé
          className="button-74" 
             onClick={() => setActiveTab("Relation")}
           >
-            sauvegarder
+            modifier événement
           </button>
           </div>
       </div>

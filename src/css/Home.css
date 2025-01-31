@@ -57,6 +57,16 @@
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Optionnel : effet de surélévation */
     border-radius: 8px; /* Optionnel : arrondit les coins */
   }
+
+
+  .caracter {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: row; /* ou 'column' selon l'effet voulu */
+    gap: 10px; /* Espace entre l’image et le texte */
+}
+
   
 
   

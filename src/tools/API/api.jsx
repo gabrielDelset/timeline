@@ -24,9 +24,11 @@ export const connect = async (id, mdp) => {
 
 /******************************** Timeline ********************************************************** */
 
-export const getTimeline = async () => {
+export const getTimeline = async (user,table) => {
   try {
-    const response = await api.get('/timeline/getinfos');
+    console.log(user);
+    console.log(table)  
+    const response = await api.put('/timeline/getinfos',{ user, table});
     return response.data;
   } catch (error) {
     console.error(error);
@@ -35,9 +37,16 @@ export const getTimeline = async () => {
 };
 
 
-export const postarc = async (name,start,end) => {
+export const postarc = async (name,start,end, email, table) => {
   try {
-    const response = await api.put('/timeline/postarc', { name, start , end });
+    console.log('api')
+    console.log(name)
+    console.log(start)
+    console.log(end)
+    console.log(email)
+    console.log(table)
+    
+    const response = await api.put('/timeline/postarc', { name, start , end ,email, table});
     return response.data;
   } catch (error) {
     console.error(error);
@@ -46,9 +55,15 @@ export const postarc = async (name,start,end) => {
 };
 
 
-export const postevenement = async (name,start) => {
+export const postevenement = async (name,start, email, table) => {
   try {
-    const response = await api.put('/timeline/postarc', { name, start});
+    console.log('api')
+    console.log(name)
+    console.log(start)
+    console.log(email)
+    console.log(table)
+
+    const response = await api.put('/timeline/postarc', { name, start, email , table});
     return response.data;
   } catch (error) {
     console.error(error);

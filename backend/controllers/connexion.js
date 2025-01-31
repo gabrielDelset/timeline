@@ -27,10 +27,11 @@ const postidentifiant = async (req, res) => {
         // Vérification de l'identifiant et du mot de passe dans la base de données
         const query = 'SELECT * FROM identifiant WHERE identifiant = $1 AND mot_de_passe = $2';
         const result = await pool.query(query, [id, hash]);
+        console.log('resultat de la table ',result.rows)
 
         if (result.rowCount > 0) {
             console.log("connexion autorisé");
-            return res.status(200).json({ code: 200, message: "Connexion réussie." });
+            return res.status(200).json({ code: 200, data: result.rows });
         } else {
             return res.status(401).json({ message: "Identifiant ou mot de passe incorrect." });
         }

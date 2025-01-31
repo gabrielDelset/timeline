@@ -19,15 +19,18 @@ const styles = {
     },
   };
 
-const PopupCreateEvent = ({ onClose , item, onRefresh}) => {
+const PopupCreateEvent = ({ onClose , item, email ,table, onRefresh}) => {
 
-  const [activeTab, setActiveTab] = useState("Relation");
   const popupRef = useRef(null);
   const [arcData, setArcData] = useState({ name: '', start: '', end: '' });
   const [eventData, setEventData] = useState({ name: '', start: '' });
   const [response, setResponse] = useState('');
 
-console.log(item);
+
+  console.log('createevent',email)
+  console.log('createevent',table)
+
+
   useEffect(() => {
     // Gestionnaire pour fermer la popup lorsqu'on clique en dehors
     const handleClickOutside = (event) => {
@@ -47,7 +50,7 @@ console.log(item);
 
   const handleAddArc = async () => {
     try {
-      await postarc(arcData.name, arcData.start, arcData.end);
+      await postarc(arcData.name, arcData.start, arcData.end, email , table);
       const updatedTimeline = await getTimeline();
       onRefresh(); 
       setResponse(updatedTimeline.data);
@@ -59,7 +62,7 @@ console.log(item);
 
   const handleAddEvent = async () => {
     try {
-      await postevenement(eventData.name, eventData.start);
+      await postevenement(eventData.name, eventData.start, email,table );
       const updatedTimeline = await getTimeline();
       onRefresh(); 
       setResponse(updatedTimeline.data);
