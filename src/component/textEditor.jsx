@@ -100,7 +100,7 @@ const TextEditor1 = (item) => {
         onClick={() => editorRef.current.focus()}
       >
         <div
-          className="editor-container"
+          className="editor-containercaracter"
           onClick={() => editorRef.current.focus()}
         >
           <Editor
@@ -112,9 +112,12 @@ const TextEditor1 = (item) => {
           />
         </div>
       </div>
-      <div className="button-container-save">
+      <div className="button-container-save1">
         <button className="button-74 save-button" onClick={saveContent}>
-          Sauvegarder
+          Supprimer
+        </button>
+        <button className="button-74 save-button" onClick={saveContent}>
+          sauvegarder
         </button>
       </div>
     </div>

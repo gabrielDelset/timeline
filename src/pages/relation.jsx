@@ -10,7 +10,7 @@ import Relationcaracter from '../pages-subfolder/relation-caracter';
 const Relation = () => {
 
 
-  const [activeTab, setActiveTab] = useState("Relation");
+  const [activeTab, setActiveTab] = useState("caracter");
 
   const networkRef = useRef(null);
 

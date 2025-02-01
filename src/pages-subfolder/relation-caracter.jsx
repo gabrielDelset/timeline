@@ -42,7 +42,6 @@ const Relationcaracter = () => {
     </div>
     <Profilesheet/>
     <ProfileTextEditor/>
-
     </div>
   );
 };

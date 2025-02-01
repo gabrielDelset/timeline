@@ -89,22 +89,23 @@
 
 /* Scrollable container */
 .editor-container {
-  max-height: 450px; /* Limite de hauteur maximale */          
-  height: 450px;
-  overflow-y: auto;  /* Barre de défilement verticale si le contenu dépasse */
+  max-height: 44vh; /* 80% de la hauteur de l'écran */
+  height: 44vh;
+  overflow-y: auto;
   border: 1px solid #ccc;
   padding: 10px;
   background-color: #fff;
 }
 
-.relation-container {
-  max-height: 500px; /* Limite de hauteur maximale */
-  height: 500px;
-  overflow-y: auto;  /* Barre de défilement verticale si le contenu dépasse */
+.editor-containercaracter {
+  max-height: 34vh; /* 80% de la hauteur de l'écran */
+  height: 34vh;
+  overflow-y: auto;
   border: 1px solid #ccc;
   padding: 10px;
   background-color: #fff;
 }
+
 
 .button-container {
   display: flex;
@@ -117,7 +118,6 @@
 .divGlobal {
   border: 1px solid white;
   padding: 10px;
-
 }
 
 .divButton {
@@ -218,4 +218,11 @@
   display: flex;
   justify-content: flex-start; /* Aligne le contenu à gauche */
   margin-top: 10px; /* Pour espacer du contenu précédent */
+}
+
+.button-container-save1 {
+  display: flex;
+  justify-content: flex-end; /* Aligne le contenu à gauche */
+  margin-top: 10px; /* Pour espacer du contenu précédent */
+  gap: 15px;
 }

@@ -88,7 +88,7 @@ const RelationTree = () => {
 
   return(
     <>
-    <div id="mynetwork" ref={networkRef} style={{ width: "100%", height: "550px", border: "1px solid lightgray" }}></div>
+    <div id="mynetwork" ref={networkRef} style={{ width: "99%", height: "56vh", border: "1px solid lightgray" }}></div>
     </>
 
   )
