@@ -1,5 +1,7 @@
 import React from "react";
 import ProfileCard from "../component/caracter";
+import Profilesheet from "../component/caracter-sheet";
+import ProfileTextEditor from "../component/textEditor"
 import '../css/Relation.css';
 const profiles = [
     { "id": 1, "photo": "#", "firstName": "Jean", "lastName": "Dupont" },
@@ -27,9 +29,7 @@ const profiles = [
 const Relationcaracter = () => {
   return (
     <div  className="fenetre">
-        
     <div className="column-caracter">
-
       {profiles.map((profile) => (
         <ProfileCard 
           key={profile.id} 
@@ -40,7 +40,8 @@ const Relationcaracter = () => {
       ))}
          
     </div>
-    
+    <Profilesheet/>
+    <ProfileTextEditor/>
 
     </div>
   );

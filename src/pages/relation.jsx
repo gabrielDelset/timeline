@@ -3,8 +3,8 @@ import { Network } from "vis-network/standalone";
 import "vis-network/styles/vis-network.css";
 import "../css/Popup.css";
 import RelationTree from '../pages-subfolder/relation-tree';
-//import Relationcaracter from '../pages-subfolder/relation-caracter';
-import Relationcaracter from '../component/caracter-sheet';
+import Relationcaracter from '../pages-subfolder/relation-caracter';
+//import Relationcaracter from '../component/caracter-sheet';
 
 
 const Relation = () => {
@@ -35,7 +35,7 @@ const Relation = () => {
         </button> 
         </div>
         <div className="popup-content">
-          {activeTab === "caracter" && <Relationcaracter />}
+          {activeTab === "caracter" && <Relationcaracter/>}
           {activeTab === "Tree" && <RelationTree />}
         </div>
 

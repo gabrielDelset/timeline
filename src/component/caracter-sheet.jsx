@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 import "../css/Relation.css";
+import empty from "../images/empty-cat.jpg";
+import { AiFillCamera } from "react-icons/ai";
 
 const Caractersheet = () => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [birthDate, setBirthDate] = useState("");
-  const [photo, setPhoto] = useState(null);
+  const [photo, setPhoto] = useState(empty);
 
   const handlePhotoChange = (event) => {
     const file = event.target.files[0];
@@ -21,9 +23,30 @@ const Caractersheet = () => {
   return (
     <div className="divGlobal">
       <div className="baniereperso">
-        <div className="photo">
-          <input type="file" accept="image/*" onChange={handlePhotoChange} />
-          {photo && <img src={photo} alt="Uploaded" className="preview" />}
+        <div className="imageperso">
+          <label htmlFor="fileInput" style={{ cursor: "pointer", position: "relative" }}>
+            <img src={photo} alt="Uploaded" className="preview" />
+            <div
+              className="icon"
+              style={{
+                position: "absolute",
+                bottom: 10,
+                right: 10,
+                background: "rgba(0,0,0,0.5)",
+                borderRadius: "50%",
+                padding: "5px",
+              }}
+            >
+              <AiFillCamera color="white" size={24} />
+            </div>
+          </label>
+          <input
+            id="fileInput"
+            type="file"
+            accept="image/*"
+            onChange={handlePhotoChange}
+            style={{ display: "none" }}
+          />
         </div>
         <div className="inputname">
           <input
