@@ -107,4 +107,14 @@ export const getJson = async (table,column,id,json) => {
   }
 };
 
+/******************************** Caracter-tree entre autre ********************************************************** */
 
+export const postcaracter = async (timeline_name,nom,photo,user,prenom,naissance,description) => {
+  try {
+    const response = await api.post('/personnes/postPersonne', {timeline_name,nom,photo,user,prenom,naissance,description});
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};

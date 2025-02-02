@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import "../css/Popup.css";
-
-import { insertJSon, getJson } from "../tools/API/api";
+import { postcaracter } from '../tools/API/api';
 
 import {
   Editor,
@@ -12,7 +11,7 @@ import {
 } from "draft-js";
 import "draft-js/dist/Draft.css";
 
-const TextEditor1 = (item) => {
+const TextEditor1 = (photos) => {
   const [response, setResponse] = useState("");
   const [editorState, setEditorState] = useState(() =>
     EditorState.createEmpty()
@@ -44,7 +43,7 @@ const TextEditor1 = (item) => {
     const content = editorState.getCurrentContent();
     const rawContent = convertToRaw(content);
     const Jsoncontent = JSON.stringify(rawContent, null, 2);
-    insertJSon("timeline", "description", item.item.id, Jsoncontent);
+    postcaracter("timeline1", "delset", photos,['gab'],'gabirel','1990-05-15','{"timeline_name": "table1","nom": "delset", "user": ["gab"], "prenom": "gabriel","naissance": "1990-05-15","description": "Texte de description simple"}' );
   };
 
   return (

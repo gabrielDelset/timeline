@@ -8,10 +8,14 @@ const cors = require('cors');
 const ConnexionScreen = require('./routes/connexion');
 const TimelineScreen = require('./routes/timeline');
 const PopupScreen = require('./routes/popup');
-const ImageScreen = require('./routes/image');
+const PersonnesTable = require('./routes/personnes');
+
 
 
 const app = express();
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
 const PORT = 3000;
 
 app.use(bodyParser.json());
@@ -20,7 +24,7 @@ app.use(cors());
 app.use('/connexion', ConnexionScreen);
 app.use('/timeline', TimelineScreen);
 app.use('/popup', PopupScreen);
-app.use('/image', ImageScreen);
+app.use('/personnes', PersonnesTable);
 
 
 app.get('/', (req, res) => {

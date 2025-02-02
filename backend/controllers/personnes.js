@@ -3,12 +3,10 @@ const multer = require("multer");
 const axios = require("axios");
 const path = require("path");
 const { Pool } = require("pg");
-const { dbConfig } = require("./bddinfo/info"); // Importation du fichier de configuration
+const { dbConfig } = require('../bddinfo/info'); // Importation du fichier de configuration
+
 
 const app = express();
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-
 const router = express.Router();
 const upload = multer({ storage: multer.memoryStorage() });
 
@@ -19,27 +17,23 @@ const port = 3000;
 // Initialisation de la connexion PostgreSQL
 const pool = new Pool(dbConfig);
 
-app.listen(port, () => {
-    console.log(`Serveur démarré sur http://localhost:${port}`);
-});
+const postPersonne = async (req, res) => {
 
-router.get("/", (req, res) => {
-    res.status(200).send({ message: "Bienvenue sur la page test" });
-});
+    const user = req.body.user;
+    const timelineName = req.body.timeline_name;
+    const nom = req.body.nom;
+    const prenom = req.body.prenom; 
+    const naissance = req.body.naissance; 
+    const description = req.body.description; 
 
-router.post("/upload", upload.single("photo"), async (req, res) => {
+
+    console.log(req.body)
+    console.log(req.body.user)
+    console.log(req.body.timeline_name)
     try {
         if (!req.file) {
             return res.status(400).json({ error: "Aucune image fournie" });
         }
-
-        console.log(req.body)
-        console.log(req.body.user)
-        console.log(req.body.timeline_name)
-        console.log(req.file.mimetype);
-
-
-
 
         const fileName = `${Date.now()}_${req.file.originalname}`;
         const uploadUrl = `${VS3_BASE_URL}${fileName}`;
@@ -50,15 +44,15 @@ router.post("/upload", upload.single("photo"), async (req, res) => {
         });
 
         // Enregistrement du chemin en BDD
-        const { timeline_name, nom, user } = req.body;
+       // const { timeline_name, nom, user } = req.body;
         const photoPath = `/timeline-photo/${fileName}`;
         const usersArray = JSON.parse(user); // Convertir JSON string en tableau JS
 
         const insertQuery = `
-        INSERT INTO personne (nom, timeline_name, photo, users) 
-        VALUES ($1, $2, $3, $4::TEXT[]) RETURNING id;
+        INSERT INTO personne (nom, timeline_name, photo, users, prenom, description, naissance) 
+        VALUES ($1, $2, $3, $4::TEXT[],$5,$6,$7) RETURNING id;
     `;
-    const result = await pool.query(insertQuery, [nom, timeline_name, photoPath, usersArray]);
+    const result = await pool.query(insertQuery, [nom, timelineName, photoPath, usersArray,prenom,description,naissance]);
     
     
     
@@ -69,9 +63,13 @@ router.post("/upload", upload.single("photo"), async (req, res) => {
         console.error("Erreur lors de l'upload :", error);
         res.status(500).json({ error: "Erreur lors de l'upload" });
     }
-});
+};
 
-// Ajout du router à l'application Express
-app.use("/", router);
 
-module.exports = app;
+//router.post("/upload", upload.single("photo"), async (req, res) => {
+
+
+// Exporter les fonctions
+module.exports = {
+    postPersonne,
+};
