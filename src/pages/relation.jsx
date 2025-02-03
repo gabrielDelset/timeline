@@ -1,5 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
-import { Network } from "vis-network/standalone";
+import React, { useState } from "react";
 import "vis-network/styles/vis-network.css";
 import "../css/Popup.css";
 import RelationTree from '../pages-subfolder/relation-tree';
@@ -12,10 +11,7 @@ const Relation = () => {
 
   const [activeTab, setActiveTab] = useState("caracter");
 
-  const networkRef = useRef(null);
 
-  useEffect(() => {
-  }, []);
 
   return(
     <>

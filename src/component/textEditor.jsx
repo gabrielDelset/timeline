@@ -1,26 +1,50 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef,useEffect } from "react";
 import "../css/Popup.css";
-import { postcaracter } from '../tools/API/api';
+import { postcaracter} from '../tools/API/api';
+import { useAuth } from '../tools/AuthContext'; 
+import 'react-notifications/lib/notifications.css';
+import { NotificationContainer, NotificationManager } from 'react-notifications';
 
 import {
   Editor,
   EditorState,
   RichUtils,
   convertToRaw,
-  convertFromRaw,
 } from "draft-js";
 import "draft-js/dist/Draft.css";
 
-const TextEditor1 = (photos) => {
-  const [response, setResponse] = useState("");
-  const [editorState, setEditorState] = useState(() =>
-    EditorState.createEmpty()
-  );
-
+const TextEditor1 = ({ id , photo, name, surname, date }) => {
+  const { email } = useAuth();
   const editorRef = useRef(null);
+  const [editorState, setEditorState] = useState(() => EditorState.createEmpty());
+  console.log("omg l'id" , id);
 
-  useEffect(() => {
-  }, []);
+
+
+
+
+  const createNotification = (type) => {
+    return () => {
+      switch (type) {
+        case 'info':
+          NotificationManager.info('Info message');
+          break;
+        case 'success':
+          NotificationManager.success('Peronnages sauvegardé', 'Succès');
+          break;
+        case 'warning':
+          NotificationManager.warning('Attention', 'Close après 3000ms', 3000);
+          break;
+        case 'error':
+          NotificationManager.error('Erreur', 'Click me!', 5000, () => {
+            alert('callback');
+          });
+          break;
+        default:
+          break;
+      }
+    };
+  };
 
   const handleKeyCommand = (command) => {
     const newState = RichUtils.handleKeyCommand(editorState, command);
@@ -43,82 +67,47 @@ const TextEditor1 = (photos) => {
     const content = editorState.getCurrentContent();
     const rawContent = convertToRaw(content);
     const Jsoncontent = JSON.stringify(rawContent, null, 2);
-    postcaracter("timeline1", "delset", photos,['gab'],'gabirel','1990-05-15','{"timeline_name": "table1","nom": "delset", "user": ["gab"], "prenom": "gabriel","naissance": "1990-05-15","description": "Texte de description simple"}' );
+
+    if (!photo) {
+      console.error("Aucune image sélectionnée !");
+      return;
+    }
+
+    postcaracter("timeline1", surname, photo, [email], name, date, Jsoncontent)
+      .then((data) => {
+        console.log("Réponse du serveur :", data);
+        createNotification('success')();
+      })
+      .catch((error) => console.error("Erreur :", error));
   };
 
   return (
     <div className="divGlobal">
       <div className="divButton">
-        <button
-          className="button-45"
-          onClick={() => toggleBlockType("header-one")}
-        >
-          Titre
-        </button>
-        <button
-          className="button-45"
-          onClick={() => toggleBlockType("header-two")}
-        >
-          Sous Titre
-        </button>
-        <button
-          className="button-45"
-          onClick={() => toggleBlockType("unordered-list-item")}
-        >
-          liste a point
-        </button>
-        <button
-          className="button-45"
-          onClick={() => toggleBlockType("ordered-list-item")}
-        >
-          liste a numéro
-        </button>
-
-        <button className="button-45" onClick={() => toggleInlineStyle("BOLD")}>
-          Gras
-        </button>
-        <button
-          className="button-45"
-          onClick={() => toggleInlineStyle("ITALIC")}
-        >
-          Italique
-        </button>
-        <button
-          className="button-45"
-          onClick={() => toggleInlineStyle("UNDERLINE")}
-        >
-          souligner
-        </button>
+        <button className="button-45" onClick={() => toggleBlockType("header-one")}>Titre</button>
+        <button className="button-45" onClick={() => toggleBlockType("header-two")}>Sous Titre</button>
+        <button className="button-45" onClick={() => toggleBlockType("unordered-list-item")}>Liste à points</button>
+        <button className="button-45" onClick={() => toggleBlockType("ordered-list-item")}>Liste numérotée</button>
+        <button className="button-45" onClick={() => toggleInlineStyle("BOLD")}>Gras</button>
+        <button className="button-45" onClick={() => toggleInlineStyle("ITALIC")}>Italique</button>
+        <button className="button-45" onClick={() => toggleInlineStyle("UNDERLINE")}>Souligner</button>
       </div>
-      <div
-        style={{
-          minHeight: "80%",
-          padding: "10px",
-          border: "1px solid #ccc",
-        }}
-        onClick={() => editorRef.current.focus()}
-      >
-        <div
-          className="editor-containercaracter"
-          onClick={() => editorRef.current.focus()}
-        >
-          <Editor
-            ref={editorRef}
-            editorState={editorState}
-            handleKeyCommand={handleKeyCommand}
-            onChange={setEditorState}
-            placeholder="Start typing..."
-          />
-        </div>
+      <div className="editor-containercaracter" onClick={() => editorRef.current?.focus()}>
+        <Editor
+          editorState={editorState}
+          handleKeyCommand={handleKeyCommand}
+          onChange={setEditorState}
+          placeholder="Commencez à écrire..."
+          ref={(editor) => (editorRef.current = editor)}
+        />
       </div>
       <div className="button-container-save1">
-        <button className="button-74 save-button" onClick={saveContent}>
-          Supprimer
-        </button>
-        <button className="button-74 save-button" onClick={saveContent}>
-          sauvegarder
+        <button className="button-74 save-button">Supprimer</button>
+        <button className="button-74 save-button" onClick={saveContent} disabled={!photo}>
+          Sauvegarder
         </button>
       </div>
+      <NotificationContainer />
     </div>
   );
 };

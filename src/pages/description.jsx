@@ -13,7 +13,6 @@ import {
 import "draft-js/dist/Draft.css";
 
 const TextEditor = (item) => {
-  const [response, setResponse] = useState("");
   const [editorState, setEditorState] = useState(() =>
     EditorState.createEmpty()
   );
@@ -25,7 +24,6 @@ const TextEditor = (item) => {
       try {
         console.log(item.item.id);
         const response = await getJson("timeline", "description", item.item.id);
-        setResponse(response.data);
         console.log("récupération du json",response);
 
         // Convert the response to Draft.js content and set editorState

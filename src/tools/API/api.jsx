@@ -97,7 +97,7 @@ export const insertJSon = async (table,column,id,json) => {
   }
 };
 
-export const getJson = async (table,column,id,json) => {
+export const getJson = async (table,column,id) => {
   try {
     const response = await api.put('/popup/getJson', {table,column,id});
     return response.data;
@@ -109,12 +109,52 @@ export const getJson = async (table,column,id,json) => {
 
 /******************************** Caracter-tree entre autre ********************************************************** */
 
-export const postcaracter = async (timeline_name,nom,photo,user,prenom,naissance,description) => {
+export const postcaracter = async (timeline_name, nom, photo, user, prenom, naissance, description) => {
   try {
-    const response = await api.post('/personnes/postPersonne', {timeline_name,nom,photo,user,prenom,naissance,description});
+    const formData = new FormData();
+    formData.append("timeline_name", timeline_name);
+    formData.append("nom", nom);
+    formData.append("photo", photo); // Assurez-vous que `photo` est un File
+    formData.append("user", JSON.stringify(user)); // Convertir le tableau en chaîne
+    formData.append("prenom", prenom);
+    formData.append("naissance", naissance);
+    formData.append("description", description);
+
+    const response = await api.post('/personnes/postPersonne', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error("Erreur lors de l'envoi des données :", error);
+    throw error;
+  }
+};
+
+
+export const getListCaracter = async ( email, table) => {
+  try {
+    console.log("backend")
+    console.log(email)
+    console.log(table)
+    const response = await api.put('/personnes/Getpersonnes', {email,table});
     return response.data;
   } catch (error) {
     console.error(error);
     throw error;
   }
 };
+
+
+export const getcaracterinfo = async (id) => {
+  try {
+    const response = await api.put('/personnes/getpersonneinfo', id,);
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+

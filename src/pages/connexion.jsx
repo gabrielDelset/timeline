@@ -1,17 +1,15 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { connect } from '../tools/API/api';
 
 const LoginPage = ({setLoggedIn, setEmail}) => {
   const [identifiant, setIdentifiant] = useState('');
   const [motDePasse, setMotDePasse] = useState('');  
-  const [Errormessage, setErrorMessage] = useState('');
+
   
 
   const handleSubmit = async (e) => {
     e.preventDefault();  // Reset error message
  
-    setErrorMessage(''); // Reset error message
 
     try {
       // Appel à l'API pour la connexion
@@ -21,12 +19,9 @@ const LoginPage = ({setLoggedIn, setEmail}) => {
       if (response.code === 200) {
         setLoggedIn(true);
         setEmail(identifiant); // Mise à jour de l'état global avec l'identifiant
-      } else {
-        setErrorMessage('Identifiant ou mot de passe incorrect.');
-      }
+      } 
     } catch (error) {
       console.error('Erreur lors de la connexion :', error);
-      setErrorMessage('Erreur de connexion. Veuillez réessayer.');
     }
   };
 

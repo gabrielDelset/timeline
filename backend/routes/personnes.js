@@ -1,11 +1,12 @@
 const express = require('express');
 const router = express.Router();
-const { postPersonne} = require('../controllers/personnes'); // Correctement importé
+const { postPersonne, getPersonnes} = require('../controllers/personnes'); // Correctement importé
 const multer = require("multer");
 const upload = multer({ storage: multer.memoryStorage() });
 
 
 router.post('/postPersonne', upload.single("photo"), postPersonne);
+router.put("/Getpersonnes", getPersonnes);
 
 
 router.get('/', (req, res) => {

@@ -2,6 +2,8 @@ import React, { useState, useRef, useEffect } from "react";
 import "../css/Popup.css";
 import { getTimeline, postarc, postevenement } from '../tools/API/api';
 
+import { useAuth } from '../tools/AuthContext';  //sert a importer les variables globals
+
 const styles = {
     container: {
       width: '100%',
@@ -19,13 +21,13 @@ const styles = {
     },
   };
 
-const PopupCreateEvent = ({ onClose , item, email ,table, onRefresh}) => {
+const PopupCreateEvent = ({ onClose , item, table, onRefresh}) => {
 
   const popupRef = useRef(null);
   const [arcData, setArcData] = useState({ name: '', start: '', end: '' });
   const [eventData, setEventData] = useState({ name: '', start: '' });
   const [response, setResponse] = useState('');
-
+  const { email } = useAuth(); // Accès direct au mail
 
   console.log('createevent',email)
   console.log('createevent',table)

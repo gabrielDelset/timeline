@@ -101,9 +101,10 @@
   max-height: 34vh; /* 80% de la hauteur de l'écran */
   height: 34vh;
   overflow-y: auto;
-  border: 1px solid #ccc;
+  border: 1px solid #0a0101;
   padding: 10px;
   background-color: #fff;
+  border: 1px solid #ccc;
 }
 
 
@@ -164,6 +165,21 @@
       padding: 0 25px;
   }
 }
+
+
+.button-74:disabled {
+  background-color: #d3d3d3; /* Gris clair */
+  border-color: #a0a0a0; /* Bordure grisée */
+  color: #808080; /* Texte grisé */
+  cursor: not-allowed; /* Curseur interdit */
+  box-shadow: none; /* Supprime l'ombre */
+}
+
+.button-74:disabled:hover {
+  background-color: #d3d3d3; /* Même couleur pour éviter l'effet hover */
+}
+
+
 
 /* Additional Button Styles */
 .button-45 {

@@ -1,15 +1,19 @@
+import React, { memo } from "react";
 import '../css/Home.css';
 
-const ProfileCard = ({ imageUrl, firstName, lastName }) => (
-  <div class="caracter">
-    <img 
-      src={imageUrl} 
-      alt={`${firstName} ${lastName}`} 
-      className="w-16 h-16 rounded-full object-cover"
-    />
+const ProfileCard = ({ id, imageUrl, firstName, lastName, onSelect }) => {
+  return (
+    <div className="caracter" onClick={() => onSelect(id)}> {/* Appel de onSelect */}
+      <img 
+        src={imageUrl} 
+        alt={`${firstName} ${lastName}`} 
+        className="previewSmall"
+      />
       <p className="text-lg font-semibold">{firstName}</p>
       <p className="text-gray-600">{lastName}</p>
-  </div>
-);
+    </div>
+  );
+};
 
-export default ProfileCard;
+// Appliquer React.memo après la déclaration du composant
+export default memo(ProfileCard);

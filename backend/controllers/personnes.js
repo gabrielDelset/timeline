@@ -53,9 +53,6 @@ const postPersonne = async (req, res) => {
         VALUES ($1, $2, $3, $4::TEXT[],$5,$6,$7) RETURNING id;
     `;
     const result = await pool.query(insertQuery, [nom, timelineName, photoPath, usersArray,prenom,description,naissance]);
-    
-    
-    
 
         res.json({ message: "Image uploadée avec succès", photoPath, id: result.rows[0].id });
 
@@ -66,10 +63,37 @@ const postPersonne = async (req, res) => {
 };
 
 
+const getPersonnes = async (req, res) => {
+    console.log("gerPersonnes")
+    console.log(req.body)
+    console.log(req.body.email)
+    console.log(req.body.table)
+    const timelineName = req.body.table;
+    const user = req.body.email;
+    try {
+        const insertQuery = `SELECT * FROM personne  WHERE $1 = ANY("users") and timeline_name = $2`;
+        const result = await pool.query(insertQuery, [user, timelineName]);
+        const personnes = result.rows.map(personne => ({
+            id: personne.id,
+            photo: `${VS3_BASE_URL}${personne.photo.replace('/timeline-photo/', '')}`,
+            firstName: personne.prenom,
+            lastName: personne.nom,
+            description : personne.description,
+            naissance  : personne.naissance
+        }));
+        res.json(personnes);
+    } catch (error) {
+        console.error("Erreur lors de la récupération des personnes :", error);
+        res.status(500).json({ error: "Erreur serveur" });
+    }
+};
+
+
 //router.post("/upload", upload.single("photo"), async (req, res) => {
 
 
 // Exporter les fonctions
 module.exports = {
     postPersonne,
+    getPersonnes,
 };

@@ -1,10 +1,12 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { Timeline, DataSet } from 'vis-timeline/standalone';
+import { Timeline} from 'vis-timeline/standalone';
 import 'vis-timeline/styles/vis-timeline-graph2d.css'; // Import des styles par défaut
 import '../css/Home.css'; // Import de ton fichier CSS personnalisé
 import PopupScreen from './popup';
 import PopupCreateScreen from './popupcreateevent';
 import { getTimeline } from '../tools/API/api';
+import { useAuth } from '../tools/AuthContext';  //sert a importer les variables globals
+
 
 const styles = {
   container: {
@@ -25,12 +27,13 @@ const styles = {
   },
 };
 
-const Home = (email) => {
+const Home = () => {
   const container = useRef(null);
   const table = useRef('table1');                                            //! a modifier plus tard mais voila ça fait le taff
 
+  const { email } = useAuth(); // Accès direct au mail
+
   const [response, setResponse] = useState('');
-  const [timelineHeight, setTimelineHeight] = useState(window.innerHeight / 2); 
   const [selectedItem, setSelectedItem] = useState(null); 
   const [isPopupOpen, setIsPopupOpen] = useState(false); 
   const [isPopupCreateOpen, setisPopupCreateOpen] = useState(false); 
@@ -39,15 +42,17 @@ const Home = (email) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await getTimeline(email.email,table.current);
+        console.log(email);
+        const response = await getTimeline(email, table.current);
         setResponse(response.data);
       } catch (error) {
         console.error('Erreur lors de la récupération de la timeline:', error);
       }
     };
-
+  
     fetchData(); //appel de la fonction
-  }, []);
+  }, [email]); // Ajout de `email` dans le tableau des dépendances
+  
 
   useEffect(() => {
     const options = {
@@ -78,17 +83,6 @@ const Home = (email) => {
         }
       });
 
-
-    // Ajuste dynamiquement la hauteur de la timeline
-    const updateHeight = () => {
-      const containerHeight = container.current.scrollHeight;
-      setTimelineHeight(Math.max(containerHeight, window.innerHeight / 2));
-    };
-  
-    timeline.on('changed', updateHeight);
-    updateHeight();
-
-
     return () => timeline.destroy();
   }, [response]);
   
@@ -102,7 +96,7 @@ const Home = (email) => {
 
   const refreshTimeline = async () => {
     try {
-      const updatedTimeline = await getTimeline(email.email,table.current); 
+      const updatedTimeline = await getTimeline(email,table.current); 
       setResponse(updatedTimeline.data); 
     } catch (error) {
       console.error('Erreur lors de la mise à jour de la timeline:', error);
@@ -124,7 +118,7 @@ const Home = (email) => {
       )}
 
         {isPopupCreateOpen && (
-         <PopupCreateScreen onClose={handleClosePopup} item={selectedItem} email={email.email} table={table.current} onRefresh={refreshTimeline} />
+         <PopupCreateScreen onClose={handleClosePopup} item={selectedItem}  table={table.current} onRefresh={refreshTimeline} />
       )}
     </div>
   );

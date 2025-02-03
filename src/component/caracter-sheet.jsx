@@ -3,18 +3,19 @@ import "../css/Relation.css";
 import empty from "../images/empty-cat.jpg";
 import { AiFillCamera } from "react-icons/ai";
 
-const Caractersheet = () => {
+const Caractersheet = ({ setPhoto , setName , setSurname , setDate}) => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [birthDate, setBirthDate] = useState("");
-  const [photo, setPhoto] = useState(empty);
+  const [photo, setPhoto1] = useState(empty);
 
   const handlePhotoChange = (event) => {
     const file = event.target.files[0];
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setPhoto(reader.result);
+        setPhoto(event.target.files[0]); // Stocke le fichier sélectionné
+        setPhoto1(reader.result); 
       };
       reader.readAsDataURL(file);
     }
@@ -53,7 +54,10 @@ const Caractersheet = () => {
             type="text"
             placeholder="Prénom"
             value={firstName}
-            onChange={(e) => setFirstName(e.target.value)}
+            onChange={(e) => {
+              setFirstName(e.target.value);
+              setName(e.target.value);
+            }}
           />
         </div>
         <div className="inputname">
@@ -61,14 +65,20 @@ const Caractersheet = () => {
             type="text"
             placeholder="Nom"
             value={lastName}
-            onChange={(e) => setLastName(e.target.value)}
+            onChange={(e) => {
+              setLastName(e.target.value);
+              setSurname(e.target.value);
+            }}
           />
         </div>
         <div className="date">
           <input
             type="date"
             value={birthDate}
-            onChange={(e) => setBirthDate(e.target.value)}
+            onChange={(e) => {
+              setBirthDate(e.target.value);
+              setDate(e.target.value)
+            }} 
           />
         </div>
       </div>

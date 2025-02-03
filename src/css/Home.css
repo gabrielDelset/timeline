@@ -62,11 +62,16 @@
   .caracter {
     display: flex;
     align-items: center;
-    justify-content: center;
     flex-direction: row; /* ou 'column' selon l'effet voulu */
-    gap: 10px; /* Espace entre l’image et le texte */
+    gap: 1vh; /* Espace entre l’image et le texte */
+    border: 1px solid #ccc;
+    width: 100%;
+    padding-left: 1vh;
 }
 
+.column-caracter > *:last-child {
+  border-bottom: none; /* Supprime le trait pour le dernier élément */
+}
   
 
   
