@@ -1,66 +1,146 @@
-import React, { useState , useEffect, useCallback} from "react";
+import React, { useState, useEffect } from "react";
 import ProfileCard from "../component/caracter";
 import Profilesheet from "../component/caracter-sheet";
-import ProfileTextEditor from "../component/textEditor"
-import '../css/Relation.css';
-import { useAuth } from '../tools/AuthContext'; 
-import { getListCaracter } from '../tools/API/api';
-
-
+import ProfileTextEditor from "../component/textEditor";
+import "../css/Relation.css";
+import { useAuth } from "../tools/AuthContext";
+import { getListCaracter } from "../tools/API/api";
+import empty from "../images/empty-cat.jpg";
 
 const Relationcaracter = () => {
   const { email } = useAuth();
-  const [profiles, setProfiles] = useState([]); // Initialisation avec un tableau videb
-  const [photo, setPhoto] = useState(null); // on stock la photos ici (pour la passer dans le texteditor)
-  const [name, setName] = useState(null); // on stock la photos ici (pour la passer dans le texteditor)
-  const [surname, setSurname] = useState(null); // on stock la photos ici (pour la passer dans le texteditor)
-  const [date, setDate] = useState(null); // on stock la photos ici (pour la passer dans le texteditor)
-  const [selectedId, setSelectedId] = useState(0); // Stocke l'ID sélectionné
+  const [profiles, setProfiles] = useState([]); 
+  const [photo, setPhoto] = useState(null);
+  const [name, setName] = useState(null);
+  const [surname, setSurname] = useState(null);
+  const [date, setDate] = useState(null);
+  const [selectedProfile, setSelectedProfile] = useState(null);
 
   useEffect(() => {
     const fetchProfiles = async () => {
       try {
-        const data = await getListCaracter(email, "timeline1"); // Attendre la réponse de l'API
-        setProfiles(data); // Mettre à jour l'état avec les données récupérées
+        const data = await getListCaracter(email, "timeline1"); 
+        
+        const emptyProfile = {
+          id: 0,
+          photo: empty,
+          firstName: "ajouter",
+          lastName: "personne",
+          description: {
+            blocks: [
+              {
+                key: "50ji1",
+                data: {},
+                text: "",
+                type: "unstyled",
+                depth: 0,
+                entityRanges: [],
+                inlineStyleRanges: []
+              }
+            ],
+            entityMap: {}
+          },
+          naissance: ""
+        };
+
+        const updatedProfiles = [emptyProfile, ...data];
+        setProfiles(updatedProfiles);
+        
+        // Sélectionner le profil vide par défaut
+        setSelectedProfile(emptyProfile);
+
       } catch (error) {
         console.error("Erreur lors de la récupération des caractères :", error);
       }
     };
 
     fetchProfiles();
-}, []); // Dépendances vides : s'exécute uniquement au montage du composant
+  }, [email]); 
+
+
+console.log(profiles)
 
 
 
-console.log("omg les datas", profiles);
+  // Mettre à jour selectedProfile quand profiles change
+  useEffect(() => {
+    if (profiles.length > 0 && !selectedProfile) {
+      setSelectedProfile(profiles.find(profile => profile.id === 0));
+    }
+  }, [profiles]);
+
+  const handleSelect = (id) => {
+    const profile = profiles.find(profile => profile.id === id);
+    if (profile) {
+      setSelectedProfile(profile);
+    }
+  };
+
+  const handleProfileDeleted = (deletedId) => {
+    setProfiles((prevProfiles) => prevProfiles.filter(profile => profile.id !== deletedId));
+
+    // Si le profil supprimé était sélectionné, repasser sur le profil par défaut (id 0)
+    if (selectedProfile && selectedProfile.id === deletedId) {
+      setSelectedProfile(profiles.find(profile => profile.id === 0));
+    }
+  };
 
 
-const handleSelect = useCallback((id) => {
-  setSelectedId(id);
-  console.log("ID sélectionné :", id);
-}, []);
-
+  const handleProfileSaved = (savedProfile) => {
+    console.log(savedProfile);
+    setProfiles((prevProfiles) => {
+      return prevProfiles.map((profile) => {
+        // Si l'ID du profil courant = l'ID du profil sauvegardé => on remplace
+        if (profile.id === savedProfile.id) {
+          return savedProfile;
+        }
+        // Sinon, on garde l'ancien
+        return profile;
+      });
+    });
+  
+    // Si le profil sauvegardé est celui qui est actuellement sélectionné,
+    // on met aussi `selectedProfile` à jour.
+    if (selectedProfile && selectedProfile.id === savedProfile.id) {
+      setSelectedProfile(savedProfile);
+    }
+  };
   
 
-
   return (
-    <div  className="fenetre">
-    <div className="column-caracter">
-      {profiles.map((profile) => (
-       <ProfileCard 
-       key={profile.id} 
-       id={profile.id}  // Ajoute l'ID ici pour être sûr qu'il est bien transmis
-       imageUrl={profile.photo} 
-       firstName={profile.firstName} 
-       lastName={profile.lastName} 
-       onSelect={handleSelect}  
-     />
-     
-      ))}
-         
-    </div>
-    <Profilesheet setPhoto={setPhoto} setName={setName} setSurname={setSurname} setDate={setDate} />
-    <ProfileTextEditor id = {selectedId} photo={photo} name={name} surname={surname} date={date}/>
+    <div className="fenetre">
+      <div className="column-caracter">
+        {profiles.map((profile) => (
+          <ProfileCard 
+            key={profile.id} 
+            id={profile.id}  
+            imageUrl={profile.photo} 
+            firstName={profile.firstName} 
+            lastName={profile.lastName} 
+            onSelect={handleSelect}  
+          />
+        ))}
+      </div>
+      {selectedProfile && (
+        <>
+          <Profilesheet  
+            selectedProfile={selectedProfile} 
+            setPhoto={setPhoto} 
+            setName={setName} 
+            setSurname={setSurname} 
+            setDate={setDate} 
+          />
+          <ProfileTextEditor 
+            selectedProfile={selectedProfile} 
+            photo={photo} 
+            name={name} 
+            surname={surname} 
+            date={date} 
+            onProfileDeleted={handleProfileDeleted} 
+            onProfileSaved ={handleProfileSaved}
+          />
+        </>
+      )}
     </div>
   );
 };

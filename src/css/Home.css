@@ -62,17 +62,22 @@
   .caracter {
     display: flex;
     align-items: center;
-    flex-direction: row; /* ou 'column' selon l'effet voulu */
+    flex-direction: row; /* ou 'column' selon l’effet voulu */
     gap: 1vh; /* Espace entre l’image et le texte */
     border: 1px solid #ccc;
     width: 100%;
     padding-left: 1vh;
 }
 
-.column-caracter > *:last-child {
-  border-bottom: none; /* Supprime le trait pour le dernier élément */
+.caracter:hover {
+    background-color: rgba(144, 213, 236, 0.349); /* Bleu clair transparent */
+    cursor: pointer;
 }
-  
+
+.column-caracter > *:last-child {
+    border-bottom: none; /* Supprime le trait pour le dernier élément */
+}
+
 
   
   

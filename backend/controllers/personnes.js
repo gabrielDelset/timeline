@@ -19,6 +19,7 @@ const pool = new Pool(dbConfig);
 
 const postPersonne = async (req, res) => {
 
+
     const user = req.body.user;
     const timelineName = req.body.timeline_name;
     const nom = req.body.nom;
@@ -26,10 +27,6 @@ const postPersonne = async (req, res) => {
     const naissance = req.body.naissance; 
     const description = req.body.description; 
 
-
-    console.log(req.body)
-    console.log(req.body.user)
-    console.log(req.body.timeline_name)
     try {
         if (!req.file) {
             return res.status(400).json({ error: "Aucune image fournie" });
@@ -62,16 +59,108 @@ const postPersonne = async (req, res) => {
     }
 };
 
+const modifyPersonne = async (req, res) => {
+    const id = req.body.id;
+    const user = req.body.user;
+    const timelineName = req.body.timeline_name;
+    const nom = req.body.nom;
+    const prenom = req.body.prenom;
+    const naissance = req.body.naissance;
+    const description = req.body.description;
+
+    console.log(req.body);
+    console.log(req.body.id);
+
+    try {
+        let photoPath = null; // Chemin de l'image à mettre à jour (optionnel)
+
+        // Si une image est envoyée, on la traite
+        if (req.file) {
+            const fileName = `${Date.now()}_${req.file.originalname}`;
+            const uploadUrl = `${VS3_BASE_URL}${fileName}`;
+
+            // Envoi de l’image à VS3
+            await axios.put(uploadUrl, req.file.buffer, {
+                headers: { "Content-Type": req.file.mimetype }
+            });
+
+            // Mise à jour du chemin de la photo
+            photoPath = `/timeline-photo/${fileName}`;
+        }
+
+        // Conversion de la liste d’utilisateurs en tableau PostgreSQL
+        const usersArray = JSON.parse(user);
+
+        // Requête SQL dynamique pour modifier uniquement les champs non nuls
+        const updateFields = [];
+        const values = [];
+        let paramIndex = 1;
+
+        if (nom) {
+            updateFields.push(`nom = $${paramIndex++}`);
+            values.push(nom);
+        }
+        if (timelineName) {
+            updateFields.push(`timeline_name = $${paramIndex++}`);
+            values.push(timelineName);
+        }
+        if (photoPath) {
+            updateFields.push(`photo = $${paramIndex++}`);
+            values.push(photoPath);
+        }
+        if (usersArray) {
+            updateFields.push(`users = $${paramIndex++}::TEXT[]`);
+            values.push(usersArray);
+        }
+        if (prenom) {
+            updateFields.push(`prenom = $${paramIndex++}`);
+            values.push(prenom);
+        }
+        if (description) {
+            updateFields.push(`description = $${paramIndex++}`);
+            values.push(description);
+        }
+        if (naissance) {
+            updateFields.push(`naissance = $${paramIndex++}`);
+            values.push(naissance);
+        }
+
+        // Ajout de l'ID en dernier paramètre pour la condition WHERE
+        values.push(id);
+        
+        if (updateFields.length === 0) {
+            return res.status(400).json({ error: "Aucune donnée à mettre à jour" });
+        }
+
+        // Construction de la requête SQL
+        const updateQuery = `
+            UPDATE personne
+            SET ${updateFields.join(", ")}
+            WHERE id = $${paramIndex}
+            RETURNING *;
+        `;
+
+        const result = await pool.query(updateQuery, values);
+
+        if (result.rowCount === 0) {
+            return res.status(404).json({ error: "Aucune personne trouvée avec cet ID" });
+        }
+
+        res.json({ message: "Personne mise à jour avec succès", data: result.rows[0] });
+
+    } catch (error) {
+        console.error("Erreur lors de la modification :", error);
+        res.status(500).json({ error: "Erreur lors de la modification" });
+    }
+};
+
+
 
 const getPersonnes = async (req, res) => {
-    console.log("gerPersonnes")
-    console.log(req.body)
-    console.log(req.body.email)
-    console.log(req.body.table)
     const timelineName = req.body.table;
     const user = req.body.email;
     try {
-        const insertQuery = `SELECT * FROM personne  WHERE $1 = ANY("users") and timeline_name = $2`;
+        const insertQuery = `SELECT * FROM personne  WHERE $1 = ANY("users") and timeline_name = $2 ORDER BY prenom`;
         const result = await pool.query(insertQuery, [user, timelineName]);
         const personnes = result.rows.map(personne => ({
             id: personne.id,
@@ -89,6 +178,49 @@ const getPersonnes = async (req, res) => {
 };
 
 
+
+const deletePersonne = async (req, res) => {
+    const { id, user, timeline_name: timelineName } = req.body;
+
+    console.log("gab");
+    console.log(req.body);
+    console.log(id);
+    console.log(user);
+    console.log(timelineName);
+
+    try {
+        // Vérification des paramètres obligatoires
+        if (!id || !user || !timelineName) {
+            return res.status(400).json({ error: "ID, user et timeline_name sont requis" });
+        }
+
+        // Si user est un tableau, on prend le premier élément
+        const userName = Array.isArray(user) ? user[0] : user;
+
+        // Requête SQL corrigée
+        const deleteQuery = `
+            DELETE FROM personne
+            WHERE id = $1 AND timeline_name = $2 AND $3 = ANY(users)
+            RETURNING *;
+        `;
+
+        const result = await pool.query(deleteQuery, [id, timelineName, userName]);
+
+        if (result.rowCount === 0) {
+            return res.status(404).json({ error: "Aucune personne trouvée avec ces critères" });
+        }
+
+        res.json({ message: "Personne supprimée avec succès", deleted: result.rows[0] });
+
+    } catch (error) {
+        console.error("Erreur lors de la suppression :", error);
+        res.status(500).json({ error: "Erreur lors de la suppression" });
+    }
+};
+
+
+
+
 //router.post("/upload", upload.single("photo"), async (req, res) => {
 
 
@@ -96,4 +228,6 @@ const getPersonnes = async (req, res) => {
 module.exports = {
     postPersonne,
     getPersonnes,
+    modifyPersonne,
+    deletePersonne,
 };

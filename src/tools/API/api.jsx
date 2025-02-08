@@ -13,7 +13,6 @@ export const connect = async (id, mdp) => {
   try {
     const response = await api.put('/connexion/sendid', { id, mdp });
     console.log(response.data);
-    console.log(1)
     return response.data; // On retourne les données de la réponse
   } catch (error) {
     console.log(2);
@@ -110,6 +109,8 @@ export const getJson = async (table,column,id) => {
 /******************************** Caracter-tree entre autre ********************************************************** */
 
 export const postcaracter = async (timeline_name, nom, photo, user, prenom, naissance, description) => {
+  console.log(timeline_name,nom,)
+
   try {
     const formData = new FormData();
     formData.append("timeline_name", timeline_name);
@@ -119,6 +120,8 @@ export const postcaracter = async (timeline_name, nom, photo, user, prenom, nais
     formData.append("prenom", prenom);
     formData.append("naissance", naissance);
     formData.append("description", description);
+
+    console.log()
 
     const response = await api.post('/personnes/postPersonne', formData, {
       headers: {
@@ -134,11 +137,48 @@ export const postcaracter = async (timeline_name, nom, photo, user, prenom, nais
 };
 
 
+
+export const modifycaracter = async (id, timeline_name, nom, photo, user, prenom, naissance, description) => {
+  try {
+    const formData = new FormData();
+    formData.append("id", id);
+    formData.append("timeline_name", timeline_name);
+    formData.append("nom", nom);
+    formData.append("photo", photo); // Assurez-vous que `photo` est un File
+    formData.append("user", JSON.stringify(user)); // Convertir le tableau en chaîne
+    formData.append("prenom", prenom);
+    formData.append("naissance", naissance);
+    formData.append("description", description);
+
+    const response = await api.post('/personnes/modifyPersonne', formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+
+    return response.data;
+  } catch (error) {
+    console.error("Erreur lors de l'envoi des données :", error);
+    throw error;
+  }
+};
+
+export const deletecaracter = async (id, timeline_name, user) => {
+  console.log(id)
+  console.log(timeline_name)
+  console.log(user)
+  try {
+    const response = await api.post('/personnes/deletePersonne', {id,timeline_name,user});
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  } 
+};
+
+
 export const getListCaracter = async ( email, table) => {
   try {
-    console.log("backend")
-    console.log(email)
-    console.log(table)
     const response = await api.put('/personnes/Getpersonnes', {email,table});
     return response.data;
   } catch (error) {
@@ -157,4 +197,8 @@ export const getcaracterinfo = async (id) => {
     throw error;
   }
 };
+
+
+
+
 

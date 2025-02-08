@@ -10,7 +10,7 @@ const Popup = ({ onClose , item, onRefresh}) => {
   const [activeTab, setActiveTab] = useState("Relation");
   const popupRef = useRef(null);
 
-console.log(item);
+//console.log(item);
   useEffect(() => {
     // Gestionnaire pour fermer la popup lorsqu'on clique en dehors
     const handleClickOutside = (event) => {

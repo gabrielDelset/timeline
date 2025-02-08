@@ -1,13 +1,52 @@
-import React, { useState } from "react";
+import React, { useState ,  useEffect} from "react";
 import "../css/Relation.css";
 import empty from "../images/empty-cat.jpg";
 import { AiFillCamera } from "react-icons/ai";
 
-const Caractersheet = ({ setPhoto , setName , setSurname , setDate}) => {
+const Caractersheet = ({  selectedProfile , setPhoto , setName , setSurname , setDate}) => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [birthDate, setBirthDate] = useState("");
   const [photo, setPhoto1] = useState(empty);
+
+
+
+  useEffect(() => {
+    try {
+      
+      if (selectedProfile !== 0) {
+        setPhoto1(selectedProfile.photo);
+        setFirstName(selectedProfile.firstName);
+        setLastName(selectedProfile.lastName);
+        setBirthDate(selectedProfile.naissance.split("T")[0]);
+  
+        // Ajout des setters pour textEditor
+        setName(selectedProfile.firstName);
+        setSurname(selectedProfile.lastName);
+        setDate(selectedProfile.naissance);
+        setPhoto(selectedProfile.photo);
+      }
+      if(selectedProfile.id === 0)
+      {
+        setPhoto1(empty);
+        setFirstName("");
+        setLastName("");
+        setBirthDate("");
+  
+        // Réinitialisation
+        setName("");
+        setSurname("");
+        setDate("");
+        setPhoto("");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }, [selectedProfile]);
+  
+
+
+
 
   const handlePhotoChange = (event) => {
     const file = event.target.files[0];
@@ -20,6 +59,7 @@ const Caractersheet = ({ setPhoto , setName , setSurname , setDate}) => {
       reader.readAsDataURL(file);
     }
   };
+
 
   return (
     <div className="divGlobal">
