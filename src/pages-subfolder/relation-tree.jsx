@@ -18,7 +18,7 @@ const RelationTree = () => {
         image: DIR + "4.png",
         label: "pictures by this guy!",
       },
-      { id: 5, shape: "circularImage", image: DIR + "5.png", label: "gabriel delset", },
+      { id: 5, shape: "circularImage", image: DIR + "5.png", label: "gabriel delset" },
       { id: 6, shape: "circularImage", image: DIR + "6.png" },
       { id: 7, shape: "circularImage", image: DIR + "7.png" },
       { id: 8, shape: "circularImage", image: DIR + "8.png" },
@@ -45,10 +45,10 @@ const RelationTree = () => {
     ];
 
     const edges = [
-      { from: 1, to: 16 , color: { color: "red" }},
+      { from: 1, to: 16, color: { color: "red" } },
       { from: 3, to: 16 },
       { from: 16, to: 3 },
-      { from: 2, to: 3},
+      { from: 2, to: 3 },
       { from: 4, to: 10 },
       { from: 1, to: 6 },
       { from: 11, to: 7 },
@@ -83,16 +83,27 @@ const RelationTree = () => {
     };
 
     const container = networkRef.current;
-    new Network(container, data, options);
+    const network = new Network(container, data, options);
+
+    network.on("doubleClick", (event) => {
+      console.log("Double click détecté !", event);
+    });
   }, []);
 
-  return(
+  return (
     <>
-    <div id="mynetwork" ref={networkRef} style={{ width: "99%", height: "56vh", border: "1px solid lightgray" }}></div>
+      <div style={{ position: "relative", width: "100%", height: "50vh" }}>
+        <div
+          ref={networkRef}
+          style={{ width: "100%", height: "100%", border: "1px solid lightgray" }}
+        ></div>
+          <div className="button-container-save2">
+          <button  className="button-74 save-button">Ajouter personne</button>
+          <button className="button-74 save-button" >Supprimer</button>
+        </div>
+      </div>
     </>
-
-  )
- 
+  );
 };
 
 export default RelationTree;

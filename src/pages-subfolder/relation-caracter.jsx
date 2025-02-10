@@ -15,6 +15,8 @@ const Relationcaracter = () => {
   const [surname, setSurname] = useState(null);
   const [date, setDate] = useState(null);
   const [selectedProfile, setSelectedProfile] = useState(null);
+  const [Update, setUpdate] = useState(true);
+  const [returnedprofile, setreturnedprofile] = useState(null);
 
   useEffect(() => {
     const fetchProfiles = async () => {
@@ -45,21 +47,20 @@ const Relationcaracter = () => {
 
         const updatedProfiles = [emptyProfile, ...data];
         setProfiles(updatedProfiles);
-        
-        // Sélectionner le profil vide par défaut
-        setSelectedProfile(emptyProfile);
 
+        if (returnedprofile === null) {
+          // Sélectionner le profil vide par défaut
+          setSelectedProfile(emptyProfile);
+        } else {
+          setSelectedProfile(profiles.find(profile => profile.id === returnedprofile) || emptyProfile);
+        }
       } catch (error) {
         console.error("Erreur lors de la récupération des caractères :", error);
       }
     };
 
     fetchProfiles();
-  }, [email]); 
-
-
-console.log(profiles)
-
+  }, [email,Update]); 
 
 
   // Mettre à jour selectedProfile quand profiles change
@@ -86,25 +87,17 @@ console.log(profiles)
   };
 
 
+
   const handleProfileSaved = (savedProfile) => {
-    console.log(savedProfile);
-    setProfiles((prevProfiles) => {
-      return prevProfiles.map((profile) => {
-        // Si l'ID du profil courant = l'ID du profil sauvegardé => on remplace
-        if (profile.id === savedProfile.id) {
-          return savedProfile;
-        }
-        // Sinon, on garde l'ancien
-        return profile;
-      });
-    });
-  
-    // Si le profil sauvegardé est celui qui est actuellement sélectionné,
-    // on met aussi `selectedProfile` à jour.
-    if (selectedProfile && selectedProfile.id === savedProfile.id) {
-      setSelectedProfile(savedProfile);
-    }
-  };
+    if(savedProfile !== 0){
+      setreturnedprofile(savedProfile.id);
+    }    
+    setTimeout(() => {
+        setUpdate(prevUpdate => !prevUpdate);
+    }, 300);
+};
+
+
   
 
   return (

@@ -73,9 +73,6 @@ if(selectedProfile.id !==0){
 }
 }, [name, photo, surname, date, editorState]);
 
-
-
-
   const createNotification = (type) => {
     return () => {
       NotificationManager.listNotify = []; // Réinitialise la file des notifications
@@ -134,7 +131,6 @@ if(selectedProfile.id !==0){
     const content = editorState.getCurrentContent();
     const rawContent = convertToRaw(content);
     const Jsoncontent = JSON.stringify(rawContent, null, 2);
-    console.log(photo)
 
     if(photo === "")          //si aucune photo n'est selectionné, on onvertis ml'image en fichier
     {
@@ -145,7 +141,6 @@ if(selectedProfile.id !==0){
     {
       postcaracter("timeline1", surname, photo, [email], name, date, Jsoncontent)
       .then((data) => {
-      //  console.log("Réponse du serveur :", data);
         createNotification('success')();
         onProfileSaved(selectedProfile);
       })
@@ -154,7 +149,6 @@ if(selectedProfile.id !==0){
     {
       modifycaracter(selectedProfile.id,"timeline1", surname, photo, [email], name, date, Jsoncontent)
       .then((data) => {
-        console.log("Réponse du serveur :", data);
         createNotification('success2')();
         onProfileSaved(selectedProfile);
       })
@@ -168,7 +162,6 @@ if(selectedProfile.id !==0){
   const deleteContent = () => {
     deletecaracter(selectedProfile.id,"timeline1",[email])
     .then((data) => {
-      console.log("Réponse du serveur :", data);
       createNotification('info')();
       onProfileDeleted(selectedProfile.id);
     })
