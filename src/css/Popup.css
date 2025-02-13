@@ -242,3 +242,17 @@
   margin-top: 10px; /* Pour espacer du contenu précédent */
   gap: 15px;
 }
+
+
+.button-container-save2 {
+  position: absolute; 
+  bottom: 0vh; 
+  right: 4vh;
+  z-index: 10;
+  display: flex;
+  justify-content: flex-end; /* Aligne le contenu à gauche */
+  margin-top: 10px; /* Pour espacer du contenu précédent */
+  gap: 4vh;
+}
+
+

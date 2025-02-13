@@ -32,6 +32,16 @@
   gap: 20px; /* Espace entre les colonnes */
 }
 
+.fenetre1 {
+  max-height: 500px;
+  height: 500px;
+  width: 99%;
+  display: flex; /* Ajout */
+  flex-direction: row; /* Affichage horizontal */
+  align-items: flex-start; /* Alignement en haut */
+  gap: 20px; /* Espace entre les colonnes */
+}
+
 
 .container {
   background-color: black;
@@ -152,3 +162,5 @@
   border-radius: 5px;
   border: 1px solid #ccc;
 }
+
+

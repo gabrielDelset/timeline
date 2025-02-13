@@ -1,10 +1,27 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Network } from "vis-network/standalone";
 import "vis-network/styles/vis-network.css";
 import "../css/Popup.css";
+import ProfileCard from "../component/caracter";
 
-const RelationTree = () => {
+const RelationTree = (profileList) => {
   const networkRef = useRef(null);
+
+
+console.log("profilelist tree",profileList.SetProfileList)   // la liste des profile récupérer dans la page d'avant 
+
+const [profiles, setProfiles] = useState([]);
+const [selectedProfile, setSelectedProfile] = useState(null);
+const [saveButton, setsaveButton] = useState(true);
+
+useEffect(() => {
+  if (profileList.SetProfileList) {
+    setProfiles(profileList.SetProfileList);
+  }
+}, [profileList.SetProfileList]); // Dépendance pour éviter les rendus infinis
+
+
+
 
   useEffect(() => {
     const DIR = "../img/indonesia/";
@@ -90,19 +107,40 @@ const RelationTree = () => {
     });
   }, []);
 
+  const handleSelect = (id) => {
+    const profile = profiles.find(profile => profile.id === id);
+    if (profile) {
+      setSelectedProfile(profile);
+      setsaveButton(false)
+    }
+  };
+
   return (
-    <>
+    <div className="fenetre">
+        <div className="column-caracter">
+        {profiles.map((profile) => (
+          <ProfileCard 
+            key={profile.id} 
+            id={profile.id}  
+            imageUrl={profile.photo} 
+            firstName={profile.firstName} 
+            lastName={profile.lastName} 
+            onSelect={handleSelect}  
+          />
+        ))}
+      </div>
+
       <div style={{ position: "relative", width: "100%", height: "50vh" }}>
         <div
           ref={networkRef}
-          style={{ width: "100%", height: "100%", border: "1px solid lightgray" }}
+          className="fenetre1"
         ></div>
           <div className="button-container-save2">
-          <button  className="button-74 save-button">Ajouter personne</button>
-          <button className="button-74 save-button" >Supprimer</button>
+          <button  className="button-74 save-button" disabled={saveButton} >Ajouter personne</button>
+          <button className="button-74 save-button"  disabled={true}>Supprimer</button>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

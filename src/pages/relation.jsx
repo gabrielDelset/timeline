@@ -8,10 +8,10 @@ import Relationcaracter from '../pages-subfolder/relation-caracter';
 
 const Relation = () => {
 
-
+  const [profileList, setProfileList] = useState([]);
   const [activeTab, setActiveTab] = useState("caracter");
 
-
+  console.log("liste des profil",profileList);
 
   return(
     <>
@@ -31,8 +31,8 @@ const Relation = () => {
         </button> 
         </div>
         <div className="popup-content">
-          {activeTab === "caracter" && <Relationcaracter/>}
-          {activeTab === "Tree" && <RelationTree />}
+          {activeTab === "caracter" && <Relationcaracter SetProfileList={setProfileList} />}
+          {activeTab === "Tree" && <RelationTree SetProfileList={profileList} />}
         </div>
 
     </>

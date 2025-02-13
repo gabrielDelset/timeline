@@ -7,7 +7,7 @@ import { useAuth } from "../tools/AuthContext";
 import { getListCaracter } from "../tools/API/api";
 import empty from "../images/empty-cat.jpg";
 
-const Relationcaracter = () => {
+const Relationcaracter = ({ SetProfileList }) => {
   const { email } = useAuth();
   const [profiles, setProfiles] = useState([]); 
   const [photo, setPhoto] = useState(null);
@@ -44,7 +44,7 @@ const Relationcaracter = () => {
           },
           naissance: ""
         };
-
+        SetProfileList(data);
         const updatedProfiles = [emptyProfile, ...data];
         setProfiles(updatedProfiles);
 
