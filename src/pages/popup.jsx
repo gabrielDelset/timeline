@@ -43,7 +43,6 @@ const handleDelete = async () => {   //permet de gérer la supression de l'évé
 
   return (
     <div className="popup-overlay">
-   
       <div className="popup-container" ref={popupRef}>
       <h1> {item.content} </h1>
         <div className="tabs-container">

@@ -36,16 +36,9 @@ export const getTimeline = async (user,table) => {
 };
 
 
-export const postarc = async (name,start,end, email, table) => {
+export const postarc = async (name,start,end, color, email, table) => {
   try {
-    console.log('api')
-    console.log(name)
-    console.log(start)
-    console.log(end)
-    console.log(email)
-    console.log(table)
-    
-    const response = await api.put('/timeline/postarc', { name, start , end ,email, table});
+    const response = await api.put('/timeline/postarc', { name, start ,color, end ,email, table});
     return response.data;
   } catch (error) {
     console.error(error);
@@ -54,7 +47,7 @@ export const postarc = async (name,start,end, email, table) => {
 };
 
 
-export const postevenement = async (name,start, email, table) => {
+export const postevenement = async (name,start,color, email, table) => {
   try {
     console.log('api')
     console.log(name)
@@ -62,7 +55,7 @@ export const postevenement = async (name,start, email, table) => {
     console.log(email)
     console.log(table)
 
-    const response = await api.put('/timeline/postarc', { name, start, email , table});
+    const response = await api.put('/timeline/postarc', { name, start,color, email , table});
     return response.data;
   } catch (error) {
     console.error(error);
@@ -197,6 +190,58 @@ export const getcaracterinfo = async (id) => {
     throw error;
   }
 };
+
+
+
+export const getLink = async (user,table) => {
+  try {
+    console.log(user);
+    console.log(table)  
+    const response = await api.put('/personnes/getLink',{ user, table});
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+export const postlink = async (json, user,table) => {
+  try {
+    console.log(user);
+    console.log(table)  
+    const response = await api.put('/personnes/postLink',{ user, table});
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+export const Getlinkdatabase = async (user,table) => {
+  try {
+    console.log(user);
+    console.log(table)  
+    const response = await api.put('/timeline/getinfos',{ user, table});
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+export const PushLInkdatabase = async (json, user,table) => {
+  try {
+    console.log("json",json);
+    console.log(user);
+    console.log(table)  
+    const response = await api.put('/personnes/postLink',{ json, user, table});
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
 
 
 

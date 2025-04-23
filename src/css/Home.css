@@ -69,13 +69,21 @@
     padding-left: 1vh;
 }
 
+/* Effet au survol */
 .caracter:hover {
     background-color: rgba(144, 213, 236, 0.349); /* Bleu clair transparent */
     cursor: pointer;
 }
 
+/* Garde le fond bleu si la classe 'gab' est présente */
+.caracter.selected {
+    background-color: rgba(0, 123, 255, 0.5); /* Bleu plus prononcé */
+    color: white; /* Texte en blanc pour le contraste */
+}
+
+/* Supprime le trait du dernier élément */
 .column-caracter > *:last-child {
-    border-bottom: none; /* Supprime le trait pour le dernier élément */
+    border-bottom: none;
 }
 
 

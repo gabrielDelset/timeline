@@ -2,12 +2,12 @@ import React, { useState, useRef, useEffect } from "react";
 import "../css/Popup.css";
 import { getTimeline, postarc, postevenement } from '../tools/API/api';
 
-import { useAuth } from '../tools/AuthContext';  //sert a importer les variables globals
+import { useAuth } from '../tools/AuthContext';  // Import des variables globales
 
 const styles = {
     container: {
       width: '100%',
-      paddingtop: '500px',
+      paddingTop: '500px', // Correction de paddingtop
     },
     timelineWrapper: {
       marginTop: '10%',
@@ -19,25 +19,21 @@ const styles = {
     buttonsWrapper: {
       width: '90%',
     },
-  };
+};
 
-const PopupCreateEvent = ({ onClose , item, table, onRefresh}) => {
-
+const PopupCreateEvent = ({ onClose, table, onRefresh }) => {
   const popupRef = useRef(null);
-  const [arcData, setArcData] = useState({ name: '', start: '', end: '' });
-  const [eventData, setEventData] = useState({ name: '', start: '' });
-  const [response, setResponse] = useState('');
-  const { email } = useAuth(); // Accès direct au mail
+  const [arcData, setArcData] = useState({ name: '', start: '', end: '', color: '#000000' });
+  const [eventData, setEventData] = useState({ name: '', start: '', color: '#000000' });
+  const { email } = useAuth(); // Accès direct à l'email de l'utilisateur
 
-  console.log('createevent',email)
-  console.log('createevent',table)
-
+  console.log('createevent', email);
+  console.log('createevent', table);
 
   useEffect(() => {
-    // Gestionnaire pour fermer la popup lorsqu'on clique en dehors
     const handleClickOutside = (event) => {
       if (popupRef.current && !popupRef.current.contains(event.target)) {
-        onClose(); // Ferme la popup
+        onClose();
       }
     };
 
@@ -47,16 +43,12 @@ const PopupCreateEvent = ({ onClose , item, table, onRefresh}) => {
     };
   }, [onClose]);
 
-
-
-
   const handleAddArc = async () => {
     try {
-      await postarc(arcData.name, arcData.start, arcData.end, email , table);
-      const updatedTimeline = await getTimeline();
-      onRefresh(); 
-      setResponse(updatedTimeline.data);
-      onClose(); // Ferme la popup
+      await postarc(arcData.name, arcData.start, arcData.end, arcData.color, email, table);
+      await getTimeline();
+      onRefresh();
+      onClose();
     } catch (error) {
       console.error('Erreur lors de l’ajout de l’arc:', error);
     }
@@ -64,25 +56,24 @@ const PopupCreateEvent = ({ onClose , item, table, onRefresh}) => {
 
   const handleAddEvent = async () => {
     try {
-      await postevenement(eventData.name, eventData.start, email,table );
-      const updatedTimeline = await getTimeline();
-      onRefresh(); 
-      setResponse(updatedTimeline.data);
-      onClose(); // Ferme la popup
+      await postevenement(eventData.name, eventData.start,eventData.color, email, table);
+      await getTimeline();
+      onRefresh();
+      onClose();
     } catch (error) {
       console.error('Erreur lors de l’ajout de l’événement:', error);
     }
   };
 
-
-  
   return (
     <div className="popup-overlay">
       <div className="popup-container" ref={popupRef}>
-      <h1> page d'ajout d'événement </h1>
-      <div style={styles.buttonsWrapper}>
+        <h1>Page d'ajout d'événement</h1>
+
+        <div style={styles.buttonsWrapper}>
+          {/* Ajout d'un Arc */}
           <div style={{ marginBottom: '20px' }}>
-            <h1>Ajout d'un arc</h1>
+            <h2>Ajout d'un arc</h2>
             <button style={{ padding: '10px 20px', marginRight: '10px' }} onClick={handleAddArc}>
               Ajouter
             </button>
@@ -103,14 +94,21 @@ const PopupCreateEvent = ({ onClose , item, table, onRefresh}) => {
             <input
               type="date"
               placeholder="Fin"
-              style={{ padding: '5px' }}
+              style={{ padding: '5px', marginRight: '10px' }}
               value={arcData.end}
               onChange={(e) => setArcData({ ...arcData, end: e.target.value })}
             />
+            <label> Couleur : </label>
+            <input
+              type="color"
+              value={arcData.color}
+              onChange={(e) => setArcData({ ...arcData, color: e.target.value })}
+            />
           </div>
 
+          {/* Ajout d'un Événement */}
           <div>
-            <h1>Ajout d'un événement</h1>
+            <h2>Ajout d'un événement</h2>
             <button style={{ padding: '10px 20px', marginRight: '10px' }} onClick={handleAddEvent}>
               Ajouter
             </button>
@@ -128,16 +126,17 @@ const PopupCreateEvent = ({ onClose , item, table, onRefresh}) => {
               value={eventData.start}
               onChange={(e) => setEventData({ ...eventData, start: e.target.value })}
             />
+            <label> Couleur : </label>
+            <input
+              type="color"
+              value={eventData.color}
+              onChange={(e) => setEventData({ ...eventData, color: e.target.value })}
+            />
           </div>
         </div>
-        </div>
+      </div>
     </div>
   );
 };
 
 export default PopupCreateEvent;
-
-
-
-
-

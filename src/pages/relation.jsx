@@ -3,7 +3,7 @@ import "vis-network/styles/vis-network.css";
 import "../css/Popup.css";
 import RelationTree from '../pages-subfolder/relation-tree';
 import Relationcaracter from '../pages-subfolder/relation-caracter';
-//import Relationcaracter from '../component/caracter-sheet';
+//import RelationTree from '../pages-subfolder/test';
 
 
 const Relation = () => {

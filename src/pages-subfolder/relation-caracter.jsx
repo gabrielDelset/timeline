@@ -111,6 +111,7 @@ const Relationcaracter = ({ SetProfileList }) => {
             firstName={profile.firstName} 
             lastName={profile.lastName} 
             onSelect={handleSelect}  
+            className={selectedProfile && profile.id === selectedProfile.id ? "selected" : "rien"} 
           />
         ))}
       </div>

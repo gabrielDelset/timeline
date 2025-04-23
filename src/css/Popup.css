@@ -25,6 +25,52 @@
   padding: 20px;
 }
 
+.popup-overlaylink {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 60%;
+  height: 60%;
+  border: 4px solid #0a0101;
+  border-radius: 25px;
+  display: flex;
+  justify-content: left;
+  align-items: left;
+  z-index: 1000;
+  transform: translate(-50%, -50%);
+  text-align: left; /* Alignement du texte */
+}
+
+
+/* Popup container */
+.popup-containerlink {
+  width: 100%; /* Prend toute la largeur du parent */
+  height: 100%; /* Prend toute la hauteur du parent */
+  background-color: #FFE7E7; /* Fond saumon */
+  border-radius: 25px;
+
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  justify-content: left;
+  padding: 20px;
+  box-sizing: border-box; /* Empêche le padding de réduire la taille */
+  text-align: left; /* Alignement du texte */
+}
+
+
+
+.popup-contentlink {
+  height: 100%;
+  width: 100%;
+  margin: 12px;
+  font-size: 16px;
+  text-align: center;
+  flex-direction: column;
+  text-align: left; /* Alignement du texte */
+}
+
+
 /* Tabs container */
 .tabs-container {
   position: absolute;
@@ -86,6 +132,9 @@
   text-align: center;
   flex-direction: column;
 }
+
+
+
 
 /* Scrollable container */
 .editor-container {
@@ -254,5 +303,46 @@
   margin-top: 10px; /* Pour espacer du contenu précédent */
   gap: 4vh;
 }
+
+.button-container-save3 {
+  position: absolute; 
+  bottom: 8vh; 
+  right: 4vh;
+  z-index: 10;
+  display: flex;
+  justify-content: flex-end; /* Aligne le contenu à gauche */
+  margin-top: 10px; /* Pour espacer du contenu précédent */
+  gap: 4vh;
+}
+.text-explicatif {
+  position: absolute;
+  top: 1vh;
+  left: 57vh;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+  display: flex; /* Active Flexbox */
+  justify-content: center; /* Centre horizontalement */
+  align-items: center; /* Centre verticalement */
+  text-align: center; /* Centre le texte */
+  margin-top: 10px;
+  gap: 4vh;
+  width: 100%; /* Facultatif, selon le besoin */
+}
+
+.close       { 
+  position: absolute; 
+  top: 5px; 
+  right: 5px; 
+  transition: all 200ms;
+  font-size: 40px; 
+  font-weight: bold; 
+  text-decoration: none; 
+  color: #333;
+  background-color: #FFE7E7;
+ }
+.close:hover { color: orange;  background-color: #FFE7E7}
+
+
+
 
 

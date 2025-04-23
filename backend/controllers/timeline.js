@@ -5,28 +5,32 @@ const { dbConfig } = require('../bddinfo/info'); // Importation du fichier de co
 // Configuration de la connexion à PostgreSQL
 const pool = new Pool(dbConfig);
 
-const getinfos = async (req, res) => {    // on utilise une async car on fait torner le code en arriére plan 
-
+const getinfos = async (req, res) => {    
     const user = req.body.user;
     const table = req.body.table;
 
-    try {
+    try {  
+        const query = `
+            SELECT 
+                id, 
+                content, 
+                TO_CHAR("start", 'YYYY-MM-DD') AS start, 
+                TO_CHAR("end", 'YYYY-MM-DD') AS end, 
+                CONCAT('background-color: ', color) AS style
+            FROM timeline 
+            WHERE $1 = ANY("users") 
+            AND timeline_name = $2;
+        `;
 
-const query =`SELECT 
-                     id, 
-                     content, 
-                      TO_CHAR("start", 'YYYY-MM-DD') AS start, 
-                      TO_CHAR("end", 'YYYY-MM-DD') AS end
-                      FROM timeline
-                      WHERE $1 = ANY("user")
-                       AND timeline_name = $2; `
-    const result = await pool.query(query, [user, table]);
-      res.send({ data: result.rows });
+        const result = await pool.query(query, [user, table]);
+
+        res.send({ data: result.rows });
     } catch (error) {
-      console.error('Erreur lors de la récupération des données :', error);
-      res.status(500).send({ error: 'Erreur serveur' });
+        console.error('Erreur lors de la récupération des données :', error);
+        res.status(500).send({ error: 'Erreur serveur' });
     }
-  };
+};
+
 
 
   const puttimelineEvenement = async (req, res) => {     //! bon bah apparament j'ai jamais eu besoin de l'utiliser celle la a voir ce que j'en fait 
@@ -35,16 +39,10 @@ const query =`SELECT
     const email = req.body.email;
     const table = req.body.table;
 
-    console.log(req.body);
-    console.log(req.body.email);
-    console.log('name',name);
-    console.log('email',email);
-    console.log('table',table);
-
     try {
         // Exécuter la requête pour insérer les données
         const result = await pool.query(
-            `INSERT INTO timeline (content, start, user , timeline_name) VALUES ($1, $2, $3, $4) RETURNING *;`,
+            `INSERT INTO timeline (content, start, users, timeline_name) VALUES ($1, $2, $3, $4) RETURNING *;`,
             [name, start, email,table ]
         );
 
@@ -63,14 +61,12 @@ const query =`SELECT
     const email = req.body.email;
     const tabemail = [email]
     const table = req.body.table;
-
-    console.log(email)
-    console.log(tabemail)
+    const color = req.body.color;
     try {
         // Exécuter la requête pour insérer les données
         const result = await pool.query(
-            `INSERT INTO timeline (content, start, "end" , "user", timeline_name) VALUES ($1, $2, $3 ,$4 , $5) RETURNING *;`,
-            [name, start, end,tabemail,table  ]
+            `INSERT INTO timeline (content, start, "end" ,color, "users", timeline_name) VALUES ($1, $2, $3 ,$4 , $5, $6) RETURNING *;`,
+            [name, start, end,color, tabemail,table  ]
         );
 
         // Envoyer les données insérées comme réponse

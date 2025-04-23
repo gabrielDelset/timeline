@@ -4,7 +4,7 @@ import 'vis-timeline/styles/vis-timeline-graph2d.css'; // Import des styles par 
 import '../css/Home.css'; // Import de ton fichier CSS personnalisé
 import PopupScreen from './popup';
 import PopupCreateScreen from './popupcreateevent';
-import { getTimeline } from '../tools/API/api';
+import { getTimeline, getLink } from '../tools/API/api';
 import { useAuth } from '../tools/AuthContext';  //sert a importer les variables globals
 
 
@@ -31,7 +31,9 @@ const Home = () => {
   const container = useRef(null);
   const table = useRef('table1');                                            //! a modifier plus tard mais voila ça fait le taff
 
-  const { email } = useAuth(); // Accès direct au mail
+  const { email } = useAuth(); 
+
+  const { LinkList , setLinkList} = useAuth(); 
 
   const [response, setResponse] = useState('');
   const [selectedItem, setSelectedItem] = useState(null); 
@@ -42,9 +44,12 @@ const Home = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        console.log(email);
         const response = await getTimeline(email, table.current);
         setResponse(response.data);
+       /* const response1 = await getLink(email, table.current);          //? on verra plus tard mais c'est ici pour les links
+          setLinkList(response1.data);
+        console.log("response1",response.data);*/
+
       } catch (error) {
         console.error('Erreur lors de la récupération de la timeline:', error);
       }

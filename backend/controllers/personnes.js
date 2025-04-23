@@ -220,8 +220,56 @@ const deletePersonne = async (req, res) => {
 
 
 
+const getLink = async (req, res) => {    // on utilise une async car on fait torner le code en arriére plan 
 
-//router.post("/upload", upload.single("photo"), async (req, res) => {
+    const user = req.body.user;
+    const table = req.body.table;
+    console.log(user)
+    console.log(table)
+    try {
+
+const query =`SELECT 
+                     liens
+                      FROM json_link
+                      WHERE $1 = ANY("users")
+                       AND timeline_name = $2; `
+    const result = await pool.query(query, [user, table]);
+    console.log(result.rows);
+      res.send({ data: result.rows });
+    } catch (error) {
+      console.error('Erreur lors de la récupération des données :', error);
+      res.status(500).send({ error: 'Erreur serveur' });
+    }
+  };
+
+
+  const postLink = async (req, res) => {    // on utilise une async car on fait torner le code en arriére plan 
+
+    const link = req.body.link;
+    const user = req.body.user;
+    const table = req.body.table;
+    console.log(link);
+    console.log(user);
+    console.log(table);
+
+    /*try {
+
+const query =`UPDATE json_link
+                SET liens = $1
+                WHERE 'gab' = ANY(users)
+                AND timeline_name = 'timeline1';`
+    const result = await pool.query(query, [link,user, table]);
+    console.log(result.rows);
+      res.send({ data: result.rows });
+    } catch (error) {
+      console.error('Erreur lors de la récupération des données :', error);
+      res.status(500).send({ error: 'Erreur serveur' });
+    }*/
+  };
+
+
+
+
 
 
 // Exporter les fonctions
@@ -230,4 +278,6 @@ module.exports = {
     getPersonnes,
     modifyPersonne,
     deletePersonne,
+    getLink,
+    postLink,
 };

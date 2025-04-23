@@ -6,7 +6,6 @@ import HomeScreen from './pages/home';
 
 function AppContent() {
   const { loggedIn, email, setLoggedIn, setEmail } = useAuth();
-
   return (
     <div style={styles.container}>
       <BrowserRouter>

@@ -53,6 +53,7 @@ const getJson = async (req, res) => {    // on utilise une async car on fait tor
         const table = req.body.table;
     const column = req.body.column;
     const id = req.body.id;
+    console.log('gab',req.body);
 
 
     console.log(table);
