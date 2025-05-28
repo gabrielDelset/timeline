@@ -9,8 +9,8 @@ const upload = multer({ storage: multer.memoryStorage() });
 router.post('/postPersonne', upload.single("photo"), postPersonne);
 router.post('/modifyPersonne', upload.single("photo"), modifyPersonne);
 router.post('/deletePersonne', deletePersonne);
-router.put("/Getpersonnes", getPersonnes);
-router.put('/getLink', getLink); 
+router.get("/Getpersonnes", getPersonnes);
+router.get('/getLink', getLink); 
 router.put('/postLink', postLink); 
 
 

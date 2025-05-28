@@ -23,11 +23,11 @@ export const connect = async (id, mdp) => {
 
 /******************************** Timeline ********************************************************** */
 
-export const getTimeline = async (user,table) => {
+export const getTimeline = async (user, table) => {
   try {
-    console.log(user);
-    console.log(table)  
-    const response = await api.put('/timeline/getinfos',{ user, table});
+    const response = await api.get('/timeline/getinfos', {
+      params: { user, table }
+    });
     return response.data;
   } catch (error) {
     console.error(error);
@@ -38,6 +38,7 @@ export const getTimeline = async (user,table) => {
 
 export const postarc = async (name,start,end, color, email, table) => {
   try {
+    console.log("api",start)
     const response = await api.put('/timeline/postarc', { name, start ,color, end ,email, table});
     return response.data;
   } catch (error) {
@@ -47,21 +48,54 @@ export const postarc = async (name,start,end, color, email, table) => {
 };
 
 
-export const postevenement = async (name,start,color, email, table) => {
-  try {
-    console.log('api')
-    console.log(name)
-    console.log(start)
-    console.log(email)
-    console.log(table)
 
-    const response = await api.put('/timeline/postarc', { name, start,color, email , table});
+/************************************** MODIF ************************************************** */
+
+export const modiftime = async (id,start,end, email) => {
+  try {
+    const response = await api.put('/timeline/modifTime', { id, start , end ,email});
     return response.data;
   } catch (error) {
     console.error(error);
     throw error;
   }
 };
+
+
+export const modifname = async (id , name, email) => {
+  try {
+    console.log('api');
+    console.log(id);
+    console.log(name);
+    console.log(email);
+
+
+    const response = await api.put('/timeline/modifName', { id, name, email });
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+
+export const modifcolor = async (id ,color, email) => {
+  try {
+    console.log('api');
+    console.log(id);
+    console.log(color);
+    console.log(email);
+
+
+    const response = await api.put('/timeline/modifColor', { id,color, email });
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+
+
 
 /******************************** Popup ********************************************************** */
 
@@ -91,7 +125,9 @@ export const insertJSon = async (table,column,id,json) => {
 
 export const getJson = async (table,column,id) => {
   try {
-    const response = await api.put('/popup/getJson', {table,column,id});
+    const response = await api.get('/popup/getJson', {
+      params: { table, column, id }
+    });
     return response.data;
   } catch (error) {
     console.error(error);
@@ -170,9 +206,11 @@ export const deletecaracter = async (id, timeline_name, user) => {
 };
 
 
-export const getListCaracter = async ( email, table) => {
+export const getListCaracter = async (email, table) => {
   try {
-    const response = await api.put('/personnes/Getpersonnes', {email,table});
+    const response = await api.get('/personnes/Getpersonnes', {
+      params: { email, table }
+    });
     return response.data;
   } catch (error) {
     console.error(error);
@@ -193,11 +231,11 @@ export const getcaracterinfo = async (id) => {
 
 
 
-export const getLink = async (user,table) => {
+export const getLink = async (user, table) => {
   try {
-    console.log(user);
-    console.log(table)  
-    const response = await api.put('/personnes/getLink',{ user, table});
+    const response = await api.get('/personnes/getLink', {
+      params: { user, table }
+    });
     return response.data;
   } catch (error) {
     console.error(error);
@@ -217,11 +255,11 @@ export const postlink = async (json, user,table) => {
   }
 };
 
-export const Getlinkdatabase = async (user,table) => {
+export const DeleteLink = async (json, user,table) => {
   try {
     console.log(user);
     console.log(table)  
-    const response = await api.put('/timeline/getinfos',{ user, table});
+    const response = await api.put('/personnes/postLink',{ user, table});
     return response.data;
   } catch (error) {
     console.error(error);
@@ -229,12 +267,10 @@ export const Getlinkdatabase = async (user,table) => {
   }
 };
 
-export const PushLInkdatabase = async (json, user,table) => {
+
+export const PushLInkdatabase = async (name, color,length,user,table) => {
   try {
-    console.log("json",json);
-    console.log(user);
-    console.log(table)  
-    const response = await api.put('/personnes/postLink',{ json, user, table});
+    const response = await api.put('/personnes/postLink',{ name,color, length , user, table});
     return response.data;
   } catch (error) {
     console.error(error);

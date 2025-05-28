@@ -33,7 +33,7 @@ const Home = () => {
 
   const { email } = useAuth(); 
 
-  const { LinkList , setLinkList} = useAuth(); 
+
 
   const [response, setResponse] = useState('');
   const [selectedItem, setSelectedItem] = useState(null); 
@@ -46,9 +46,6 @@ const Home = () => {
       try {
         const response = await getTimeline(email, table.current);
         setResponse(response.data);
-       /* const response1 = await getLink(email, table.current);          //? on verra plus tard mais c'est ici pour les links
-          setLinkList(response1.data);
-        console.log("response1",response.data);*/
 
       } catch (error) {
         console.error('Erreur lors de la récupération de la timeline:', error);
@@ -108,7 +105,7 @@ const Home = () => {
     }
   };
   
-
+//console.log("main",selectedItem);
 
   return (
     <div style={{ backgroundColor: '#575757', padding: '20px' }}>

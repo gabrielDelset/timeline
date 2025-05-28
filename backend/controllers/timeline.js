@@ -5,10 +5,12 @@ const { dbConfig } = require('../bddinfo/info'); // Importation du fichier de co
 // Configuration de la connexion à PostgreSQL
 const pool = new Pool(dbConfig);
 
-const getinfos = async (req, res) => {    
-    const user = req.body.user;
-    const table = req.body.table;
 
+//****************************** GET INFOS *********************************************** */
+
+const getinfos = async (req, res) => {    
+    const user = req.query.user;
+    const table = req.query.table;
     try {  
         const query = `
             SELECT 
@@ -33,26 +35,8 @@ const getinfos = async (req, res) => {
 
 
 
-  const puttimelineEvenement = async (req, res) => {     //! bon bah apparament j'ai jamais eu besoin de l'utiliser celle la a voir ce que j'en fait 
-    const name = req.body.name;
-    const start = req.body.start;
-    const email = req.body.email;
-    const table = req.body.table;
 
-    try {
-        // Exécuter la requête pour insérer les données
-        const result = await pool.query(
-            `INSERT INTO timeline (content, start, users, timeline_name) VALUES ($1, $2, $3, $4) RETURNING *;`,
-            [name, start, email,table ]
-        );
-
-        // Envoyer les données insérées comme réponse
-        res.send({ data: result.rows });
-    } catch (error) {
-        console.error('Erreur lors de l’insertion dans timeline', error);
-        res.status(500).send({ error: 'Erreur lors de l’insertion' });
-    }
-  };
+//****************************** INSERT INTO TABLE *********************************************** */
 
   const puttimelineArc = async (req, res) => {
     const name = req.body.name;
@@ -62,6 +46,9 @@ const getinfos = async (req, res) => {
     const tabemail = [email]
     const table = req.body.table;
     const color = req.body.color;
+    console.log("gab is here");
+    console.log(req.body);
+    console.log(end);
     try {
         // Exécuter la requête pour insérer les données
         const result = await pool.query(
@@ -97,12 +84,94 @@ const deleteEvenement = async (req, res) => {
 
 
 
+//****************************** UPDATES *********************************************** */
+
+
+
+
+const alterTimeArc = async (req, res) => {
+    const id = req.body.id;
+    const start = req.body.start;
+    const end = req.body.end;
+    const email = req.body.email;
+
+    try {
+        // Exécuter la requête pour insérer les données
+        const result = await pool.query(
+            `UPDATE timeline
+                SET start = $1,
+                    "end" = $2
+                WHERE id = $3 AND  $4 = ANY(users);`,
+            [ start, end, id,email]
+        );
+
+        // Envoyer les données insérées comme réponse
+        res.send({ data: result.rows });
+    } catch (error) {
+        console.error('Erreur lors de l’insertion dans timeline', error);
+        res.status(500).send({ error: 'Erreur lors de l’insertion' });
+    }
+};
+
+const alterNameArc = async (req, res) => {
+    const id = req.body.id;
+    const name = req.body.name;
+    const email = req.body.email;
+    console.log(req.body);
+
+
+    try {
+        // Exécuter la requête pour insérer les données
+        const result = await pool.query(
+            `UPDATE timeline
+                SET content = $1
+                WHERE id = $2 AND  $3 = ANY(users);`,
+            [ name, id, email]
+        );
+
+        // Envoyer les données insérées comme réponse
+        res.send({ data: result.rows });
+    } catch (error) {
+        console.error('Erreur lors de l’insertion dans timeline', error);
+        res.status(500).send({ error: 'Erreur lors de l’insertion' });
+    }
+};
+
+const alterColorArc = async (req, res) => {
+    const { id, color, email } = req.body;
+    console.log(req.body);
+
+    try {
+        const result = await pool.query(
+            `UPDATE timeline
+             SET color = $1
+             WHERE id = $2 AND $3 = ANY(users);`,
+            [color, id, email]
+        );
+
+        if (result.rowCount === 0) {
+            return res.status(404).send({ error: 'Aucune ligne mise à jour. Vérifie l\'id ou l\'email.' });
+        }
+
+        res.send({ data: result.rows });
+    } catch (error) {
+        console.error('Erreur lors de la mise à jour de la couleur', error);
+        res.status(500).send({ error: 'Erreur lors de la mise à jour' });
+    }
+};
+
+
+
+//****************************** EXPORT *********************************************** */
+
 // Exporter les fonctions
 module.exports = {
     getinfos,
     puttimelineArc,
-    puttimelineEvenement,
     deleteEvenement,
+    alterTimeArc,
+    alterColorArc,
+    alterNameArc,
 };
 
 

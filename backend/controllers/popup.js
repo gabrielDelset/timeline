@@ -48,31 +48,22 @@ const insertJson = async (req, res) => {
 
 
 
-const getJson = async (req, res) => {    // on utilise une async car on fait torner le code en arriére plan 
+const getJson = async (req, res) => {
     try {
-        const table = req.body.table;
-    const column = req.body.column;
-    const id = req.body.id;
-    console.log('gab',req.body);
-
-
-    console.log(table);
-    console.log(column);
-    console.log(id);
-
-      // Attente du résultat de la requête
-      const query = `SELECT ${column}
-                     FROM ${table}
-                    WHERE id = $1;`;            // le await permet d'attendre la réponse
-
+      const table = req.query.table;
+      const column = req.query.column;
+      const id = req.query.id;
+  
+      const query = `SELECT ${column} FROM ${table} WHERE id = $1;`;
       const result = await pool.query(query, [id]);
-      console.log("json récupéré",result.rows)
-      res.send(result.rows[0]?.description);
+  
+      res.send(result.rows[0]?.[column]);
     } catch (error) {
       console.error('Erreur lors de la récupération des données :', error);
       res.status(500).send({ error: 'Erreur serveur' });
     }
   };
+  
 
 
 

@@ -4,7 +4,7 @@ const { insertJson, getJson} = require('../controllers/popup'); // Correctement 
 
 
 router.put('/insertJson', insertJson); 
-router.put('/getJson', getJson); 
+router.get('/getJson', getJson);
 //router.put('/postevenement', puttimelineEvenement); 
 //router.put('/deleteEvent', deleteEvenement); 
 
