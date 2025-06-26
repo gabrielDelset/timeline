@@ -255,11 +255,9 @@ export const postlink = async (json, user,table) => {
   }
 };
 
-export const DeleteLink = async (json, user,table) => {
+export const DeleteLink = async (id, user,table) => {
   try {
-    console.log(user);
-    console.log(table)  
-    const response = await api.put('/personnes/postLink',{ user, table});
+    const response = await api.put('/personnes/deleteLink',{ id, user, table});
     return response.data;
   } catch (error) {
     console.error(error);

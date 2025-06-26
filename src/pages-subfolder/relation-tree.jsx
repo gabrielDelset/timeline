@@ -32,7 +32,7 @@ const RelationTree = ({ SetProfileList }) => {
   const options = {
     layout: { hierarchical: false },
     edges: {
-      color: { color: "#000000", highlight: "#0a0000", hover: "#af0b0b" },
+      color: { color: "#92da9e", highlight: "#0a0000", hover: "#af0b0b" },
       length: 600,
       arrows: { to: { enabled: false }, from: { enabled: false } }
     },
@@ -41,7 +41,7 @@ const RelationTree = ({ SetProfileList }) => {
       borderWidth: 4,
       size: 30,
       color: { border: "#222222", background: "#666666" },
-      font: { color: "#c51717" }
+      font: { color: "#91a4e4" }
     },
     interaction: { hover: true },
     physics: { enable: true },

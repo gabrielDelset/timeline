@@ -54,6 +54,17 @@ const PopupCreateEvent = ({ onClose, table, onRefresh }) => {
     }
   };
 
+  const handleAddEvent = async () => {
+    try {
+      await postarc(eventData.name, eventData.start, null, eventData.color, email, table);
+      await getTimeline();
+      onRefresh();
+      onClose();
+    } catch (error) {
+      console.error('Erreur lors de l’ajout de l’arc:', error);
+    }
+  };
+
   
 
   return (
@@ -100,7 +111,7 @@ const PopupCreateEvent = ({ onClose, table, onRefresh }) => {
           {/* Ajout d'un Événement */}
           <div>
             <h2>Ajout d'un événement</h2>
-            <button style={{ padding: '10px 20px', marginRight: '10px' }} onClick={handleAddArc}>
+            <button style={{ padding: '10px 20px', marginRight: '10px' }} onClick={handleAddEvent}>
               Ajouter
             </button>
             <input

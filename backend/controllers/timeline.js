@@ -11,58 +11,67 @@ const pool = new Pool(dbConfig);
 const getinfos = async (req, res) => {    
     const user = req.query.user;
     const table = req.query.table;
+  
     try {  
-        const query = `
-            SELECT 
-                id, 
-                content, 
-                TO_CHAR("start", 'YYYY-MM-DD') AS start, 
-                TO_CHAR("end", 'YYYY-MM-DD') AS end, 
-                CONCAT('background-color: ', color) AS style
-            FROM timeline 
-            WHERE $1 = ANY("users") 
-            AND timeline_name = $2;
-        `;
-
-        const result = await pool.query(query, [user, table]);
-
-        res.send({ data: result.rows });
+      const query = `
+        SELECT 
+          id, 
+          content, 
+          TO_CHAR("start", 'YYYY-MM-DD HH24:MI') AS start, 
+          TO_CHAR("end", 'YYYY-MM-DD HH24:MI') AS end, 
+          CONCAT('background-color: ', color) AS style
+        FROM timeline 
+        WHERE $1 = ANY("users") 
+        AND timeline_name = $2;
+      `;
+  
+      const result = await pool.query(query, [user, table]);
+  
+      res.send({ data: result.rows });
     } catch (error) {
-        console.error('Erreur lors de la récupération des données :', error);
-        res.status(500).send({ error: 'Erreur serveur' });
+      console.error('Erreur lors de la récupération des données :', error);
+      res.status(500).send({ error: 'Erreur serveur' });
     }
-};
+  };
+  
 
 
 
 
 //****************************** INSERT INTO TABLE *********************************************** */
 
-  const puttimelineArc = async (req, res) => {
-    const name = req.body.name;
-    const start = req.body.start;
-    const end = req.body.end;
-    const email = req.body.email;
-    const tabemail = [email]
-    const table = req.body.table;
-    const color = req.body.color;
+const puttimelineArc = async (req, res) => {
+    const { name, start, end, email, table, color } = req.body;
+    const tabemail = [email];
+  
     console.log("gab is here");
     console.log(req.body);
-    console.log(end);
-    try {
-        // Exécuter la requête pour insérer les données
-        const result = await pool.query(
-            `INSERT INTO timeline (content, start, "end" ,color, "users", timeline_name) VALUES ($1, $2, $3 ,$4 , $5, $6) RETURNING *;`,
-            [name, start, end,color, tabemail,table  ]
-        );
-
-        // Envoyer les données insérées comme réponse
-        res.send({ data: result.rows });
-    } catch (error) {
-        console.error('Erreur lors de l’insertion dans timeline', error);
-        res.status(500).send({ error: 'Erreur lors de l’insertion' });
+  
+    // Forcer start à 00:01
+    const formattedStart = new Date(start);
+    formattedStart.setHours(0, 1, 0, 0); // 00:01:00.000
+  
+    // Forcer end à 23:59 si fourni, sinon mettre à null
+    let formattedEnd = null;
+    if (end) {
+      formattedEnd = new Date(end);
+      formattedEnd.setHours(23, 59, 0, 0); // 23:59:00.000
     }
-};
+  
+    try {
+      const result = await pool.query(
+        `INSERT INTO timeline (content, start, "end", color, "users", timeline_name)
+         VALUES ($1, $2, $3, $4, $5, $6) RETURNING *;`,
+        [name, formattedStart, formattedEnd, color, tabemail, table]
+      );
+  
+      res.send({ data: result.rows });
+    } catch (error) {
+      console.error('Erreur lors de l’insertion dans timeline', error);
+      res.status(500).send({ error: 'Erreur lors de l’insertion' });
+    }
+  };
+  
 
 
 const deleteEvenement = async (req, res) => {

@@ -242,6 +242,35 @@ const getLink = async (req, res) => {
 };
 
 
+  const deleteLink = async (req, res) => {    // on utilise une async car on fait torner le code en arriére plan 
+
+    const user = req.body.user;
+    const timeline = req.body.table;
+    const id = req.body.id;
+
+    const tabemail = [user]
+
+    console.log(req.body);
+
+
+    try {
+        const query = `
+      DELETE FROM json_link
+      WHERE id = $1
+        AND "users" = $2
+        AND timeline_name = $3
+      RETURNING *;
+    `
+        const result = await pool.query(query, [id, tabemail, timeline]);
+    console.log(result.rows);
+      res.send({ data: result.rows });
+    } catch (error) {
+      console.error('Erreur lors de la récupération des données :', error);
+      res.status(500).send({ error: 'Erreur serveur' });
+    }
+  };
+
+
   const postLink = async (req, res) => {    // on utilise une async car on fait torner le code en arriére plan 
 
     const name = req.body.name;
@@ -275,4 +304,5 @@ module.exports = {
     deletePersonne,
     getLink,
     postLink,
+    deleteLink,
 };
