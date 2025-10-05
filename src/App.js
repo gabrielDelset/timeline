@@ -9,7 +9,7 @@ function AppContent() {
   return (
     <div style={styles.container}>
       <BrowserRouter>
-        <div style={{ backgroundColor: '#575757', minHeight: '100vh' }}>
+        <div style={{ backgroundColor: '#ffffffff', minHeight: '100vh' }}>
           {loggedIn ? (
             <HomeScreen email={email} />
           ) : (

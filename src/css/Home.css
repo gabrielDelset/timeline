@@ -1,11 +1,22 @@
 /* Styles personnalisés pour la timeline */
 .vis-timeline {
-    background-color: #575757; /* Couleur de fond */
+    background-color: #ffffff; /* Couleur de fond */
     border: 1px solid #ccc; /* Bordure légère */
     border-radius: 8px; /* Coins arrondis - corrigé */
     color: #d63e3e; /* Couleur du texte - correction ici */
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Ombre légère */
   }
+
+  /* Cible tous les items de la timeline */
+.vis-item .vis-item-content {
+  width: 100% !important;   /* occupe toute la largeur de l'item */
+  text-align: center;       /* centre horizontalement */
+  font-weight: bold;        /* gras */
+  box-sizing: border-box;   /* pour éviter des débordements */
+}
+
+
+
   
   .vis-item {
     background-color: #18e218; /* Couleur de fond des items */

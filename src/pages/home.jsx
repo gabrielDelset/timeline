@@ -1,131 +1,190 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { Timeline} from 'vis-timeline/standalone';
-import 'vis-timeline/styles/vis-timeline-graph2d.css'; // Import des styles par défaut
-import '../css/Home.css'; // Import de ton fichier CSS personnalisé
+import { Timeline } from 'vis-timeline/standalone';
+import 'vis-timeline/styles/vis-timeline-graph2d.css';
+import styled, { createGlobalStyle } from 'styled-components';
+
 import PopupScreen from './popup';
 import PopupCreateScreen from './popupcreateevent';
-import { getTimeline, getLink } from '../tools/API/api';
-import { useAuth } from '../tools/AuthContext';  //sert a importer les variables globals
+import { getTimeline } from '../tools/API/api';
+import { useAuth } from '../tools/AuthContext';
 
+// ---------- STYLES ----------
+const GlobalTimelineStyle = createGlobalStyle`
+  .vis-timeline {
+    background-color: #ffffff;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  }
 
-const styles = {
-  container: {
-    width: '100%',
-    paddingtop: '500px',
-    height: '100%', // 25% de la hauteur de l'écran
-  },
-  timelineWrapper: {
-    marginTop: '10%',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    width: '100%',
-    height: '100vh', //* 25% de la hauteur de l'écran
-  },
-  buttonsWrapper: {
-    width: '90%',
-  },
-};
+  /* Texte centré par défaut */
+  .vis-item .vis-item-content {
+    font-weight: bold;
+  }
 
+  .vis-item {
+    background-color: #18e218;
+    color: #000;
+    border-radius: 4px;
+    padding: 4px 6px;
+    font-size: 14px;
+    
+  }
+  .vis-item:hover { background-color: #45a049; cursor: pointer; }
+  .vis-time-axis .vis-text { font-weight: bold; color: #000; }
+`;
+
+const PageWrapper = styled.div`background:#fff; padding:20px;`;
+const TimelineWrapper = styled.div`
+  margin-top:10%;
+  display:flex; flex-direction:column; align-items:center;
+  width:100%; height:100vh;
+`;
+const TimelineContainer = styled.div`width:100%; height:100px;`;
+
+// ---------- COMPONENT ----------
 const Home = () => {
   const container = useRef(null);
-  const table = useRef('table1');                                            //! a modifier plus tard mais voila ça fait le taff
+  const timelineRef = useRef(null);
+  const { email } = useAuth();
+  const table = useRef('table1');
 
-  const { email } = useAuth(); 
+  const [items, setItems] = useState([]);
+  const [selectedItem, setSelectedItem] = useState(null);
+  const [isPopupOpen, setIsPopupOpen] = useState(false);
+  const [isPopupCreateOpen, setIsPopupCreateOpen] = useState(false);
 
-
-
-  const [response, setResponse] = useState('');
-  const [selectedItem, setSelectedItem] = useState(null); 
-  const [isPopupOpen, setIsPopupOpen] = useState(false); 
-  const [isPopupCreateOpen, setisPopupCreateOpen] = useState(false); 
-
-
+  // Fetch data
   useEffect(() => {
-    const fetchData = async () => {
+    (async () => {
       try {
-        const response = await getTimeline(email, table.current);
-        setResponse(response.data);
-
-      } catch (error) {
-        console.error('Erreur lors de la récupération de la timeline:', error);
+        const res = await getTimeline(email, table.current);
+        setItems(res?.data ?? []);
+      } catch (e) {
+        console.error('Erreur timeline:', e);
       }
-    };
-  
-    fetchData(); //appel de la fonction
-  }, [email]); // Ajout de `email` dans le tableau des dépendances
-  
+    })();
+  }, [email]);
 
+  // Ajuste l'alignement selon la moitié de l’élément
+  const adjustItemAlignment = () => {
+    const host = container.current;
+    if (!host) return;
+
+    // viewport central
+    const panel =
+      host.querySelector('.vis-panel.vis-center') ||
+      host.querySelector('.vis-panel');
+    const viewport = panel ?? host;
+    const vpRect = viewport.getBoundingClientRect();
+
+    const itemEls = host.querySelectorAll('.vis-item');
+    itemEls.forEach((el) => {
+      const r = el.getBoundingClientRect();
+      const midX = (r.left + r.right) / 2;
+
+      // reset
+      el.classList.remove('align-left', 'align-right');
+
+      if (r.left < vpRect.left && midX < vpRect.left) {
+        // plus de la moitié sortie à gauche
+        el.classList.add('align-left');
+      } else if (r.right > vpRect.right && midX > vpRect.right) {
+        // plus de la moitié sortie à droite
+        el.classList.add('align-right');
+      }
+    });
+  };
+
+  // Create timeline + hooks
   useEffect(() => {
+    if (!container.current) return;
+
     const options = {
       selectable: true,
       editable: false,
-      showCurrentTime: true, // Affiche la ligne de l'heure actuelle
-      zoomMin: 604800000, // Zoom minimum : 1 semaine
-      zoomMax: 3155760000000, // Zoom maximum : 1 siècle
+      align : 'center',
+      showCurrentTime: false,
+      zoomMin: 604800000,
+      zoomMax: 3155760000000,
     };
-    const timeline = new Timeline(container.current, response, options);
-  
-    timeline.on('select', (event) => {
-      const selectedId = event.items[0]; // ID de l'élément sélectionné
-      if (selectedId) {
-        const selectedData = response.find((item) => item.id === selectedId);
-        setSelectedItem(selectedData);      // Mettre à jour les données de l'élément sélectionné
-        setIsPopupOpen(true);             // Ouvrir la popup
+
+    const timeline = new Timeline(container.current, items, options);
+    timelineRef.current = timeline;
+
+    const onSelect = (ev) => {
+      const id = ev.items[0];
+      if (!id) return;
+      const found = items.find((it) => it.id === id);
+      if (found) {
+        setSelectedItem(found);
+        setIsPopupOpen(true);
       }
-    });
+    };
+    const onDoubleClick = (ev) => {
+      if (!ev.item) setIsPopupCreateOpen(true);
+    };
+    const onAnyChange = () => requestAnimationFrame(adjustItemAlignment);
 
+    timeline.on('select', onSelect);
+    timeline.on('doubleClick', onDoubleClick);
+    timeline.on('rangechange', onAnyChange);
+    timeline.on('rangechanged', onAnyChange);
+    timeline.on('changed', onAnyChange);
 
+    requestAnimationFrame(adjustItemAlignment);
+    const onResize = () => requestAnimationFrame(adjustItemAlignment);
+    window.addEventListener('resize', onResize);
 
-        // Gestion de l'événement "doubleClick"
-      timeline.on('doubleClick', (event) => {
-        // Vérifiez que le double-clic ne concerne pas un élément existant
-        if (!event.item) {
-          setisPopupCreateOpen(true); // Ouvrir la popupde création de popup
-        }
-      });
+    return () => {
+      window.removeEventListener('resize', onResize);
+      timeline.destroy();
+      timelineRef.current = null;
+    };
+  }, [items]);
 
-    return () => timeline.destroy();
-  }, [response]);
-  
-
-  
-  const handleClosePopup =  async() => {
+  const handleClosePopup = () => {
     setIsPopupOpen(false);
-    setisPopupCreateOpen(false);
+    setIsPopupCreateOpen(false);
     setSelectedItem(null);
   };
 
   const refreshTimeline = async () => {
     try {
-      const updatedTimeline = await getTimeline(email,table.current); 
-      setResponse(updatedTimeline.data); 
-    } catch (error) {
-      console.error('Erreur lors de la mise à jour de la timeline:', error);
+      const updated = await getTimeline(email, table.current);
+      setItems(updated?.data ?? []);
+      requestAnimationFrame(adjustItemAlignment);
+    } catch (e) {
+      console.error('Erreur maj timeline:', e);
     }
   };
-  
-//console.log("main",selectedItem);
 
   return (
-    <div style={{ backgroundColor: '#575757', padding: '20px' }}>
-      <div style={styles.timelineWrapper}>
-        <div
-          ref={container}
-          style={{ ...styles.container, height: `100px` }}
-        />
-      </div>
+    <PageWrapper>
+      <GlobalTimelineStyle />
+
+      <TimelineWrapper>
+        <TimelineContainer ref={container} />
+      </TimelineWrapper>
+
       {isPopupOpen && selectedItem && (
-         <PopupScreen onClose={handleClosePopup} item={selectedItem} onRefresh={refreshTimeline} />
+        <PopupScreen
+          onClose={handleClosePopup}
+          item={selectedItem}
+          onRefresh={refreshTimeline}
+        />
       )}
 
-        {isPopupCreateOpen && (
-         <PopupCreateScreen onClose={handleClosePopup} item={selectedItem}  table={table.current} onRefresh={refreshTimeline} />
+      {isPopupCreateOpen && (
+        <PopupCreateScreen
+          onClose={handleClosePopup}
+          item={selectedItem}
+          table={table.current}
+          onRefresh={refreshTimeline}
+        />
       )}
-    </div>
+    </PageWrapper>
   );
-
-  
 };
 
 export default Home;

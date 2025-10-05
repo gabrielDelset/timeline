@@ -1,63 +1,94 @@
 import React, { useState, useRef, useEffect } from "react";
-import "../css/Popup.css";
+import styled from "styled-components";
 import { getTimeline, modiftime, modifname, modifcolor } from '../tools/API/api';
+import { useAuth } from '../tools/AuthContext';
 
-import { useAuth } from '../tools/AuthContext';  // Import des variables globales
+const Overlay = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+`;
 
-const styles = {
-    container: {
-      width: '100%',
-      paddingTop: '500px', // Correction de paddingtop
-    },
-    timelineWrapper: {
-      marginTop: '10%',
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      width: '100%',
-    },
-    buttonsWrapper: {
-      width: '90%',
-    },
-};
+const Container = styled.div`
+  width: 80%;
+  height: 80%;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+`;
+
+const Section = styled.div`
+  margin-bottom: 20px;
+`;
+
+const Title = styled.h1`
+  margin-bottom: 20px;
+`;
+
+const Subtitle = styled.h2`
+  margin-bottom: 10px;
+`;
+
+const Input = styled.input`
+  padding: 5px;
+  margin-right: 10px;
+`;
+
+const Button = styled.button`
+  padding: 10px 20px;
+  margin-right: 10px;
+  border: none;
+  border-radius: 5px;
+  background-color: #007bff;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #0056b3;
+  }
+`;
 
 const PopupModifEvent = ({ onClose, item, onRefresh }) => {
   const popupRef = useRef(null);
   const [arcData, setArcData] = useState({ name: '', start: '', end: '', color: '#000000' });
-  const [eventData, setEventData] = useState({ name: '', start: '', color: '#000000' });
-  const { email } = useAuth(); // Accès direct à l'email de l'utilisateur
-
- // console.log('createevent', email);
-
+  const { email } = useAuth();
 
   useEffect(() => {
-    console.log("on close")
     const handleClickOutside = (event) => {
       if (popupRef.current && !popupRef.current.contains(event.target)) {
         onClose();
       }
     };
-
     document.addEventListener("mousedown", handleClickOutside);
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [onClose]);
 
-// Ajoute ce useEffect juste après
-useEffect(() => {
-  if (item) {
-    const colorMatch = item.style?.match(/#([0-9a-fA-F]{6})/);
-    const extractedColor = colorMatch ? `#${colorMatch[1]}` : '#000000'; // couleur par défaut si non trouvée
-    setArcData((prev) => ({
-      ...prev,
-      start: item.start || '',
-      end: item.end || '',
-      name: item.content || '',
-      color: extractedColor
-    }));
-  }
-}, [item]);
+  useEffect(() => {
+    if (item) {
+      const colorMatch = item.style?.match(/#([0-9a-fA-F]{6})/);
+      const extractedColor = colorMatch ? `#${colorMatch[1]}` : '#000000';
+      setArcData({
+        start: item.start || '',
+        end: item.end || '',
+        name: item.content || '',
+        color: extractedColor,
+      });
+    }
+  }, [item]);
 
   const handleTime = async () => {
     try {
@@ -92,66 +123,48 @@ useEffect(() => {
     }
   };
 
-
-
-//console.log("itzm modif",item);
-
   return (
-    <div className="popup-overlay">
-      <div className="popup-container" ref={popupRef}>
-        <h1>modifier "{item.content}"</h1>
-        <div style={styles.buttonsWrapper}>
-          {/* Ajout d'un Arc */}
-          <div style={{ marginBottom: '20px' }}>
-            <h2>modifier periode</h2>
-            <button style={{ padding: '10px 20px', marginRight: '10px' }} onClick={handleTime}>
-            modifier
-            </button>
-            <input
-              type="date"
-              placeholder="Début"
-              style={{ padding: '5px', marginRight: '10px' }}
-              value={arcData.start}
-              onChange={(e) => setArcData({ ...arcData, start: e.target.value })}
-            />
-            <input
-              type="date"
-              placeholder="Fin"
-              style={{ padding: '5px', marginRight: '10px' }}
-              value={arcData.end}
-              onChange={(e) => setArcData({ ...arcData, end: e.target.value })}
-            />
-          </div>
+    <Overlay>
+      <Container ref={popupRef}>
+        <Title>modifier "{item.content}"</Title>
+        
+        <Section>
+          <Subtitle>modifier période</Subtitle>
+          <Button onClick={handleTime}>modifier</Button>
+          <Input
+            type="date"
+            value={arcData.start}
+            onChange={(e) => setArcData({ ...arcData, start: e.target.value })}
+          />
+          <Input
+            type="date"
+            value={arcData.end}
+            onChange={(e) => setArcData({ ...arcData, end: e.target.value })}
+          />
+        </Section>
 
-          {/* Ajout d'un Événement */}
-          <div>
-            <h2>modifier nom</h2>
-            <button style={{ padding: '10px 20px', marginRight: '10px' }} onClick={handleName}>
-            modifier
-            </button>
-            <input
-              type="text"
-              placeholder="Nom"
-              style={{ padding: '5px', marginRight: '10px' }}
-              value={arcData.name}
-              onChange={(e) => setArcData({ ...arcData, name: e.target.value })}
-            />
-          </div>
-          <div>
-            <h2>modifier couleur</h2>
-            <button style={{ padding: '10px 20px', marginRight: '10px' }} onClick={handleColor}>
-              modifier
-            </button>
-            <label> Couleur : </label>
-            <input
-              type="color"
-              value={arcData.color}
-              onChange={(e) => setArcData({ ...arcData, color: e.target.value })}
-            />
-          </div>
-        </div>
-      </div>
-    </div>
+        <Section>
+          <Subtitle>modifier nom</Subtitle>
+          <Button onClick={handleName}>modifier</Button>
+          <Input
+            type="text"
+            value={arcData.name}
+            onChange={(e) => setArcData({ ...arcData, name: e.target.value })}
+          />
+        </Section>
+
+        <Section>
+          <Subtitle>modifier couleur</Subtitle>
+          <Button onClick={handleColor}>modifier</Button>
+          <label> Couleur : </label>
+          <Input
+            type="color"
+            value={arcData.color}
+            onChange={(e) => setArcData({ ...arcData, color: e.target.value })}
+          />
+        </Section>
+      </Container>
+    </Overlay>
   );
 };
 

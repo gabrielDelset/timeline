@@ -1,11 +1,43 @@
 import React, { useState, useEffect } from "react";
+import styled from "styled-components";
 import ProfileCard from "../component/caracter";
 import Profilesheet from "../component/caracter-sheet";
 import ProfileTextEditor from "../component/textEditor";
-import "../css/Relation.css";
 import { useAuth } from "../tools/AuthContext";
 import { getListCaracter } from "../tools/API/api";
 import empty from "../images/empty-cat.jpg";
+
+// ---------------- STYLED COMPONENTS ----------------
+
+const Fenetre = styled.div`
+  max-height: 500px;
+  height: 500px;
+  border: 1px solid #ccc;
+  width: 99%;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 20px;
+`;
+
+const ColumnCaracter = styled.div`
+  max-height: 52.3vh;
+  height: 52.3vh;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  margin-left: 0;
+  border: 1px solid #ccc;
+  width: 25vh;
+  overflow-y: auto;
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+`;
+
+// ---------------- COMPONENT ----------------
 
 const Relationcaracter = ({ SetProfileList }) => {
   const { email } = useAuth();
@@ -49,7 +81,6 @@ const Relationcaracter = ({ SetProfileList }) => {
         setProfiles(updatedProfiles);
 
         if (returnedprofile === null) {
-          // Sélectionner le profil vide par défaut
           setSelectedProfile(emptyProfile);
         } else {
           setSelectedProfile(profiles.find(profile => profile.id === returnedprofile) || emptyProfile);
@@ -60,10 +91,8 @@ const Relationcaracter = ({ SetProfileList }) => {
     };
 
     fetchProfiles();
-  }, [email,Update]); 
+  }, [email, Update]); 
 
-
-  // Mettre à jour selectedProfile quand profiles change
   useEffect(() => {
     if (profiles.length > 0 && !selectedProfile) {
       setSelectedProfile(profiles.find(profile => profile.id === 0));
@@ -79,14 +108,10 @@ const Relationcaracter = ({ SetProfileList }) => {
 
   const handleProfileDeleted = (deletedId) => {
     setProfiles((prevProfiles) => prevProfiles.filter(profile => profile.id !== deletedId));
-
-    // Si le profil supprimé était sélectionné, repasser sur le profil par défaut (id 0)
     if (selectedProfile && selectedProfile.id === deletedId) {
       setSelectedProfile(profiles.find(profile => profile.id === 0));
     }
   };
-
-
 
   const handleProfileSaved = (savedProfile) => {
     if(savedProfile !== 0){
@@ -95,14 +120,11 @@ const Relationcaracter = ({ SetProfileList }) => {
     setTimeout(() => {
         setUpdate(prevUpdate => !prevUpdate);
     }, 300);
-};
-
-
-  
+  };
 
   return (
-    <div className="fenetre">
-      <div className="column-caracter">
+    <Fenetre>
+      <ColumnCaracter>
         {profiles.map((profile) => (
           <ProfileCard 
             key={profile.id} 
@@ -111,10 +133,10 @@ const Relationcaracter = ({ SetProfileList }) => {
             firstName={profile.firstName} 
             lastName={profile.lastName} 
             onSelect={handleSelect}  
-            className={selectedProfile && profile.id === selectedProfile.id ? "selected" : "rien"} 
+            className={selectedProfile && profile.id === selectedProfile.id ? "selected" : ""} 
           />
         ))}
-      </div>
+      </ColumnCaracter>
       {selectedProfile && (
         <>
           <Profilesheet  
@@ -131,11 +153,11 @@ const Relationcaracter = ({ SetProfileList }) => {
             surname={surname} 
             date={date} 
             onProfileDeleted={handleProfileDeleted} 
-            onProfileSaved ={handleProfileSaved}
+            onProfileSaved={handleProfileSaved}
           />
         </>
       )}
-    </div>
+    </Fenetre>
   );
 };
 

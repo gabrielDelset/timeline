@@ -1,39 +1,92 @@
-import React, { useState ,  useEffect} from "react";
-import "../css/Relation.css";
+import React, { useState, useEffect } from "react";
+import styled from "styled-components";
 import empty from "../images/empty-cat.jpg";
 import { AiFillCamera } from "react-icons/ai";
 
-const Caractersheet = ({  selectedProfile , setPhoto , setName , setSurname , setDate}) => {
+// ---------------- STYLED COMPONENTS ----------------
+
+const Wrapper = styled.div`
+  border: 1px solid white;
+  padding: 10px;
+`;
+
+const Banner = styled.div`
+  max-height: 45vh;
+  height: 45vh;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+`;
+
+const ImageWrapper = styled.div`
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 15px;
+`;
+
+const Preview = styled.img`
+  height: 170px;
+  width: 170px;
+  border-radius: 85px;
+  border: 2px solid black;
+  object-fit: cover;
+`;
+
+const CameraIcon = styled.div`
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  background: rgba(0,0,0,0.5);
+  border-radius: 50%;
+  padding: 5px;
+  cursor: pointer;
+`;
+
+const InputWrapper = styled.div`
+  width: 100%;
+  margin-bottom: 10px;
+`;
+
+const Input = styled.input`
+  width: 100%;
+  padding: 8px;
+  margin: 5px 0;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+`;
+
+const Caractersheet = ({ selectedProfile, setPhoto, setName, setSurname, setDate }) => {
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [birthDate, setBirthDate] = useState("");
   const [photo, setPhoto1] = useState(empty);
 
-
-
   useEffect(() => {
     try {
-      
       if (selectedProfile !== 0) {
         setPhoto1(selectedProfile.photo);
         setFirstName(selectedProfile.firstName);
         setLastName(selectedProfile.lastName);
         setBirthDate(selectedProfile.naissance.split("T")[0]);
-  
-        // Ajout des setters pour textEditor
+
         setName(selectedProfile.firstName);
         setSurname(selectedProfile.lastName);
         setDate(selectedProfile.naissance);
         setPhoto(selectedProfile.photo);
       }
-      if(selectedProfile.id === 0)
-      {
+      if (selectedProfile.id === 0) {
         setPhoto1(empty);
         setFirstName("");
         setLastName("");
         setBirthDate("");
-  
-        // Réinitialisation
+
         setName("");
         setSurname("");
         setDate("");
@@ -43,43 +96,28 @@ const Caractersheet = ({  selectedProfile , setPhoto , setName , setSurname , se
       console.log(error);
     }
   }, [selectedProfile]);
-  
-
-
-
 
   const handlePhotoChange = (event) => {
     const file = event.target.files[0];
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setPhoto(event.target.files[0]); // Stocke le fichier sélectionné
-        setPhoto1(reader.result); 
+        setPhoto(event.target.files[0]);
+        setPhoto1(reader.result);
       };
       reader.readAsDataURL(file);
     }
   };
 
-
   return (
-    <div className="divGlobal">
-      <div className="baniereperso">
-        <div className="imageperso">
-          <label htmlFor="fileInput" style={{ cursor: "pointer", position: "relative" }}>
-            <img src={photo} alt="Uploaded" className="preview" />
-            <div
-              className="icon"
-              style={{
-                position: "absolute",
-                bottom: 10,
-                right: 10,
-                background: "rgba(0,0,0,0.5)",
-                borderRadius: "50%",
-                padding: "5px",
-              }}
-            >
+    <Wrapper>
+      <Banner>
+        <ImageWrapper>
+          <label htmlFor="fileInput" style={{ cursor: "pointer" }}>
+            <Preview src={photo} alt="Uploaded" />
+            <CameraIcon>
               <AiFillCamera color="white" size={24} />
-            </div>
+            </CameraIcon>
           </label>
           <input
             id="fileInput"
@@ -88,9 +126,10 @@ const Caractersheet = ({  selectedProfile , setPhoto , setName , setSurname , se
             onChange={handlePhotoChange}
             style={{ display: "none" }}
           />
-        </div>
-        <div className="inputname">
-          <input
+        </ImageWrapper>
+
+        <InputWrapper>
+          <Input
             type="text"
             placeholder="Prénom"
             value={firstName}
@@ -99,9 +138,10 @@ const Caractersheet = ({  selectedProfile , setPhoto , setName , setSurname , se
               setName(e.target.value);
             }}
           />
-        </div>
-        <div className="inputname">
-          <input
+        </InputWrapper>
+
+        <InputWrapper>
+          <Input
             type="text"
             placeholder="Nom"
             value={lastName}
@@ -110,19 +150,20 @@ const Caractersheet = ({  selectedProfile , setPhoto , setName , setSurname , se
               setSurname(e.target.value);
             }}
           />
-        </div>
-        <div className="date">
-          <input
+        </InputWrapper>
+
+        <InputWrapper>
+          <Input
             type="date"
             value={birthDate}
             onChange={(e) => {
               setBirthDate(e.target.value);
-              setDate(e.target.value)
-            }} 
+              setDate(e.target.value);
+            }}
           />
-        </div>
-      </div>
-    </div>
+        </InputWrapper>
+      </Banner>
+    </Wrapper>
   );
 };
 
