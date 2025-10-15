@@ -296,6 +296,54 @@ const getLink = async (req, res) => {
   };
 
 
+const saveTree = async (req, res) => {    // on utilise une async car on fait torner le code en arriére plan 
+  const { json, user, id } = req.body;
+
+
+
+  try {
+    const query = `
+      UPDATE timeline 
+      SET liens = $1
+      WHERE id = $3
+      AND $2 = ANY(users)
+      RETURNING *;
+    `;
+
+    const result = await pool.query(query, [json, user, id]); // on passe user directement pour le ANY()
+    
+    console.log(result.rows);
+    res.send({ data: result.rows });
+  } catch (error) {
+    console.error('Erreur lors de la mise à jour des données :', error);
+    res.status(500).send({ error: 'Erreur serveur' });
+  }
+};
+
+
+
+const savenodes = async (req, res) => {
+  const { json, user, id } = req.body;
+
+  try {
+    const query = `
+      UPDATE timeline 
+      SET personnes = $1
+      WHERE id = $2
+      AND $3 = ANY(users)
+      RETURNING *;
+    `;
+
+    const result = await pool.query(query, [json, id, user]);
+    res.send({ data: result.rows });
+  } catch (error) {
+    console.error('Erreur lors de la mise à jour des données :', error);
+    res.status(500).send({ error: 'Erreur serveur' });
+  }
+};
+
+
+
 // Exporter les fonctions
 module.exports = {
     postPersonne,
@@ -305,4 +353,6 @@ module.exports = {
     getLink,
     postLink,
     deleteLink,
+    saveTree,
+    savenodes
 };

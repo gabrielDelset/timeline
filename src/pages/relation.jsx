@@ -5,6 +5,8 @@ import styled from "styled-components";
 import RelationTree from '../pages-subfolder/relation-tree';
 import Relationcaracter from '../pages-subfolder/relation-caracter';
 
+
+
 // -------- STYLED COMPONENTS --------
 
 const ButtonGroup = styled.div`
@@ -46,11 +48,11 @@ const Content = styled.div`
 
 // -------- COMPONENT --------
 
-const Relation = () => {
+const Relation = ({item}) => {
   const [profileList, setProfileList] = useState([]);
   const [activeTab, setActiveTab] = useState("caracter");
 
-  console.log("liste des profil", profileList);
+  //console.log("liste des profil", item.id);
 
   return (
     <>
@@ -75,7 +77,7 @@ const Relation = () => {
           <Relationcaracter SetProfileList={setProfileList} />
         )}
         {activeTab === "Tree" && (
-          <RelationTree SetProfileList={profileList} />
+          <RelationTree SetProfileList={profileList}   item={item}/>
         )}
       </Content>
     </>

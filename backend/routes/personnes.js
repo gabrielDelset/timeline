@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { postPersonne, getPersonnes, modifyPersonne, deletePersonne, getLink, postLink, deleteLink } = require('../controllers/personnes');
+const { postPersonne, getPersonnes, modifyPersonne, deletePersonne, getLink, postLink, deleteLink , saveTree , savenodes} = require('../controllers/personnes');
 
 const multer = require("multer");
 const upload = multer({ storage: multer.memoryStorage() });
@@ -13,6 +13,8 @@ router.get("/Getpersonnes", getPersonnes);
 router.get('/getLink', getLink); 
 router.put('/postLink', postLink); 
 router.put('/deleteLink', deleteLink); 
+router.put('/savetree', saveTree); 
+router.put('/savenode', savenodes); 
 
 
 router.get('/', (req, res) => {

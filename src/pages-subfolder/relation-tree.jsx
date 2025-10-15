@@ -7,6 +7,7 @@ import { useAuth } from "../tools/AuthContext";
 import { v4 as uuid } from "uuid";
 import { SaveTreeEdges, SaveTreeNodes } from "../tools/API/api";
 
+
 // ---------------- STYLED COMPONENTS (équivalents à Relation.css + Popup.css) ----------------
 
 const Fenetre = styled.div`
@@ -143,10 +144,34 @@ const RelationTree = ({ SetProfileList, item }) => {
   const [legendLinks, setLegendLinks] = useState([]);
   const { email, selectedLink } = useAuth();
   const [enable, setEnable] = useState(false);
+  const { personnesJsonList } = useAuth();  //on récupére les liens et les noodes ici 
+  
 
-  useEffect(() => {
-    if (SetProfileList) setProfiles(SetProfileList);
-  }, [SetProfileList]);
+
+useEffect(() => {
+  if (SetProfileList) setProfiles(SetProfileList);
+
+  if (!personnesJsonList || !item?.id) return;
+
+  // ✅ Trouver le groupe correspondant à l'ID courant
+    console.log("item.id",item.id) ;
+    console.log("personnesJsonList",personnesJsonList) ;
+  const found = personnesJsonList.find(el => el.id === item.id);
+console.log("found",found);
+
+
+  if (found) {
+      console.log(found.liens) ;
+    setEdges(found.liens ?? []);
+    setNodes(found.personnes ?? []);
+  } else {
+    // Si rien trouvé, on vide le graph
+     console.log(found) ;
+    setEdges([]);
+    setNodes([]);
+  }
+}, [SetProfileList, personnesJsonList, item]);
+
 
   const options = {
     layout: { hierarchical: false },
@@ -248,8 +273,9 @@ const RelationTree = ({ SetProfileList, item }) => {
   };
 
   const SaveTree = async () => {
-    // await SaveTreeEdges(edges, email, item.id);
-    // await SaveTreeNodes(nodes, email, item.id);
+    console.log(email);
+    await SaveTreeEdges(JSON.stringify(edges), email, item.id);
+    await SaveTreeNodes(JSON.stringify(nodes), email, item.id);
   };
 
   const handleDisableText = () => {

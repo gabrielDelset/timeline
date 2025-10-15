@@ -81,9 +81,16 @@ const PopupModifEvent = ({ onClose, item, onRefresh }) => {
     if (item) {
       const colorMatch = item.style?.match(/#([0-9a-fA-F]{6})/);
       const extractedColor = colorMatch ? `#${colorMatch[1]}` : '#000000';
+
+      // Conversion des dates au format accepté par <input type="date">
+      const formatDate = (dateString) => {
+        if (!dateString) return '';
+        return dateString.split(' ')[0]; // Ex: "2020-03-17 00:00" -> "2020-03-17"
+      };
+
       setArcData({
-        start: item.start || '',
-        end: item.end || '',
+        start: formatDate(item.start),
+        end: formatDate(item.end),
         name: item.content || '',
         color: extractedColor,
       });
@@ -122,6 +129,8 @@ const PopupModifEvent = ({ onClose, item, onRefresh }) => {
       console.error('Erreur lors de la modif color:', error);
     }
   };
+
+  console.log(arcData);
 
   return (
     <Overlay>

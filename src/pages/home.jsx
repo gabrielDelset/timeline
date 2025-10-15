@@ -5,7 +5,7 @@ import styled, { createGlobalStyle } from 'styled-components';
 
 import PopupScreen from './popup';
 import PopupCreateScreen from './popupcreateevent';
-import { getTimeline } from '../tools/API/api';
+import { getTimeline , getJsonLinks} from '../tools/API/api';
 import { useAuth } from '../tools/AuthContext';
 
 // ---------- STYLES ----------
@@ -46,7 +46,7 @@ const TimelineContainer = styled.div`width:100%; height:100px;`;
 const Home = () => {
   const container = useRef(null);
   const timelineRef = useRef(null);
-  const { email } = useAuth();
+  const { email, setPersonnesJsonList } = useAuth(); 
   const table = useRef('table1');
 
   const [items, setItems] = useState([]);
@@ -54,17 +54,19 @@ const Home = () => {
   const [isPopupOpen, setIsPopupOpen] = useState(false);
   const [isPopupCreateOpen, setIsPopupCreateOpen] = useState(false);
 
-  // Fetch data
   useEffect(() => {
     (async () => {
       try {
+        const resJSon = await getJsonLinks(email, table.current);
         const res = await getTimeline(email, table.current);
-        setItems(res?.data ?? []);
+
+        setItems(res?.data ?? []); 
+        setPersonnesJsonList(resJSon?.data ?? []); 
       } catch (e) {
         console.error('Erreur timeline:', e);
       }
     })();
-  }, [email]);
+  }, [email]); 
 
   // Ajuste l'alignement selon la moitié de l’élément
   const adjustItemAlignment = () => {
@@ -105,8 +107,8 @@ const Home = () => {
       editable: false,
       align : 'center',
       showCurrentTime: false,
-      zoomMin: 604800000,
-      zoomMax: 3155760000000,
+      zoomMin: 10,        // 5 siècles
+      zoomMax: 315360000000000,  // déjà correct (~100 000 ans)
     };
 
     const timeline = new Timeline(container.current, items, options);
@@ -142,6 +144,10 @@ const Home = () => {
       timelineRef.current = null;
     };
   }, [items]);
+
+  //console.log("items",items);
+//  console.log("json",Json);
+
 
   const handleClosePopup = () => {
     setIsPopupOpen(false);

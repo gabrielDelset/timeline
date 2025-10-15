@@ -107,6 +107,7 @@ const TextEditor = ({ item }) => {
       try {
         const response = await getJson("timeline", "description", item.id);
         if (response) {
+          console.log("response", response);
           const contentState = convertFromRaw(response);
           setEditorState(EditorState.createWithContent(contentState));
         }

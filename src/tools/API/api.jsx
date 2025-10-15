@@ -35,6 +35,17 @@ export const getTimeline = async (user, table) => {
   }
 };
 
+export const getJsonLinks = async (user, table) => {
+  try {
+    const response = await api.get('/timeline/getJsonLinks', {
+      params: { user, table }
+    });
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
 
 export const postarc = async (name,start,end, color, email, table) => {
   try {
@@ -276,6 +287,30 @@ export const PushLInkdatabase = async (name, color,length,user,table) => {
   }
 };
 
+export const SaveTreeEdges = async (json,user,id) => {
+  console.log(json);
+    console.log(user);
+    console.log(id);
+  try {
+    const response = await api.put('/personnes/savetree',{ json,user,id});
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
+export const SaveTreeNodes = async (json,user,id) => {
+    console.log(json);
+    console.log(user);
+    console.log(id);
+  try {
+    const response = await api.put('/personnes/savenode',{ json,user,id});
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
 
 
 

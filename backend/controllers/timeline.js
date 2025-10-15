@@ -11,7 +11,7 @@ const pool = new Pool(dbConfig);
 const getinfos = async (req, res) => {    
     const user = req.query.user;
     const table = req.query.table;
-  
+  console.log(1);
     try {  
       const query = `
         SELECT 
@@ -33,7 +33,29 @@ const getinfos = async (req, res) => {
       res.status(500).send({ error: 'Erreur serveur' });
     }
   };
+
+  const getJsonLinks = async (req, res) => {    
+    const user = req.query.user;
+    const table = req.query.table;
+    try {  
+      const query = `
+        SELECT 
+          id, 
+          personnes, 
+          liens 
+        FROM timeline 
+        WHERE $1 = ANY("users") 
+        AND timeline_name = $2;
+      `;
   
+      const result = await pool.query(query, [user, table]);
+  
+      res.send({ data: result.rows });
+    } catch (error) {
+      console.error('Erreur lors de la récupération des données :', error);
+      res.status(500).send({ error: 'Erreur serveur' });
+    }
+  };
 
 
 
@@ -181,6 +203,7 @@ module.exports = {
     alterTimeArc,
     alterColorArc,
     alterNameArc,
+    getJsonLinks,
 };
 
 
