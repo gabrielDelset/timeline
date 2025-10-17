@@ -21,7 +21,20 @@ export const connect = async (id, mdp) => {
   }
 };
 
-/******************************** Timeline ********************************************************** */
+/******************************** Timeline  / Home ****************************************************** */
+
+
+export const getTimelineList = async (user) => {
+  try {
+    const response = await api.get('/timeline/getList', {
+      params: { user }
+    });
+    return response.data;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
+};
 
 export const getTimeline = async (user, table) => {
   try {

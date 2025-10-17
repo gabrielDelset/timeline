@@ -34,6 +34,29 @@ const getinfos = async (req, res) => {
     }
   };
 
+
+const getList = async (req, res) => {    
+    const user = req.query.user;
+
+    try {  
+      const query = `
+        SELECT 
+        id, 
+        content, 
+        owner
+        FROM timelinelist 
+        WHERE $1 = ANY("users") 
+      `;
+  
+      const result = await pool.query(query, [user]);
+  
+      res.send({ data: result.rows });
+    } catch (error) {
+      console.error('Erreur lors de la récupération des données :', error);
+      res.status(500).send({ error: 'Erreur serveur' });
+    }
+  };
+
   const getJsonLinks = async (req, res) => {    
     const user = req.query.user;
     const table = req.query.table;
@@ -204,6 +227,7 @@ module.exports = {
     alterColorArc,
     alterNameArc,
     getJsonLinks,
+    getList,
 };
 
 

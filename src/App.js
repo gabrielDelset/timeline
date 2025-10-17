@@ -3,6 +3,7 @@ import './App.css';
 import { AuthProvider, useAuth } from './tools/AuthContext';
 import Connexion from './pages/connexion';
 import HomeScreen from './pages/home';
+import TimelineScreen from './pages/timeline';
 
 function AppContent() {
   const { loggedIn, email, setLoggedIn, setEmail } = useAuth();

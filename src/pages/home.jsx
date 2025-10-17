@@ -1,195 +1,151 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { Timeline } from 'vis-timeline/standalone';
-import 'vis-timeline/styles/vis-timeline-graph2d.css';
-import styled, { createGlobalStyle } from 'styled-components';
-
-import PopupScreen from './popup';
-import PopupCreateScreen from './popupcreateevent';
-import { getTimeline , getJsonLinks} from '../tools/API/api';
+import styled from 'styled-components';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../tools/AuthContext';
+import { getTimelineList} from '../tools/API/api';
 
-// ---------- STYLES ----------
-const GlobalTimelineStyle = createGlobalStyle`
-  .vis-timeline {
-    background-color: #ffffff;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-  }
-
-  /* Texte centré par défaut */
-  .vis-item .vis-item-content {
-    font-weight: bold;
-  }
-
-  .vis-item {
-    background-color: #18e218;
-    color: #000;
-    border-radius: 4px;
-    padding: 4px 6px;
-    font-size: 14px;
-    
-  }
-  .vis-item:hover { background-color: #45a049; cursor: pointer; }
-  .vis-time-axis .vis-text { font-weight: bold; color: #000; }
+const Page = styled.div`
+  background: #f8f9fa;
+  min-height: 100vh;
+  color: #222;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 `;
 
-const PageWrapper = styled.div`background:#fff; padding:20px;`;
-const TimelineWrapper = styled.div`
-  margin-top:10%;
-  display:flex; flex-direction:column; align-items:center;
-  width:100%; height:100vh;
+const Banner = styled.div`
+  width: 100%;
+  background: linear-gradient(90deg, #007bff, #6610f2);
+  color: white;
+  padding: 20px 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1.6rem;
+  font-weight: bold;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 `;
-const TimelineContainer = styled.div`width:100%; height:100px;`;
 
-// ---------- COMPONENT ----------
+const Button = styled.button`
+  background: #fff;
+  color: #007bff;
+  border: none;
+  border-radius: 10px;
+  font-weight: bold;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 1rem;
+
+  &:hover {
+    background: #e6e6e6;
+  }
+`;
+
+const Section = styled.div`
+  width: 100%;
+  max-width: 1200px;
+  margin: 40px 0;
+`;
+
+const SectionTitle = styled.h2`
+  font-size: 1.4rem;
+  margin-left: 20px;
+`;
+
+const Row = styled.div`
+  display: flex;
+  gap: 20px;
+  overflow-x: auto;
+  padding: 20px;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+`;
+
+const Card = styled.div`
+  flex: 0 0 250px;
+  height: 150px;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 1.1rem;
+  transition: transform 0.2s, box-shadow 0.2s;
+
+  &:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    cursor: pointer;
+  }
+`;
+
 const Home = () => {
-  const container = useRef(null);
-  const timelineRef = useRef(null);
-  const { email, setPersonnesJsonList } = useAuth(); 
-  const table = useRef('table1');
+  const { email } = useAuth();
+  const navigate = useNavigate();
 
-  const [items, setItems] = useState([]);
-  const [selectedItem, setSelectedItem] = useState(null);
-  const [isPopupOpen, setIsPopupOpen] = useState(false);
-  const [isPopupCreateOpen, setIsPopupCreateOpen] = useState(false);
-
-  useEffect(() => {
-    (async () => {
-      try {
-        const resJSon = await getJsonLinks(email, table.current);
-        const res = await getTimeline(email, table.current);
-
-        setItems(res?.data ?? []); 
-        setPersonnesJsonList(resJSon?.data ?? []); 
-      } catch (e) {
-        console.error('Erreur timeline:', e);
-      }
-    })();
-  }, [email]); 
-
-  // Ajuste l'alignement selon la moitié de l’élément
-  const adjustItemAlignment = () => {
-    const host = container.current;
-    if (!host) return;
-
-    // viewport central
-    const panel =
-      host.querySelector('.vis-panel.vis-center') ||
-      host.querySelector('.vis-panel');
-    const viewport = panel ?? host;
-    const vpRect = viewport.getBoundingClientRect();
-
-    const itemEls = host.querySelectorAll('.vis-item');
-    itemEls.forEach((el) => {
-      const r = el.getBoundingClientRect();
-      const midX = (r.left + r.right) / 2;
-
-      // reset
-      el.classList.remove('align-left', 'align-right');
-
-      if (r.left < vpRect.left && midX < vpRect.left) {
-        // plus de la moitié sortie à gauche
-        el.classList.add('align-left');
-      } else if (r.right > vpRect.right && midX > vpRect.right) {
-        // plus de la moitié sortie à droite
-        el.classList.add('align-right');
-      }
-    });
-  };
-
-  // Create timeline + hooks
-  useEffect(() => {
-    if (!container.current) return;
-
-    const options = {
-      selectable: true,
-      editable: false,
-      align : 'center',
-      showCurrentTime: false,
-      zoomMin: 10,        // 5 siècles
-      zoomMax: 315360000000000,  // déjà correct (~100 000 ans)
-    };
-
-    const timeline = new Timeline(container.current, items, options);
-    timelineRef.current = timeline;
-
-    const onSelect = (ev) => {
-      const id = ev.items[0];
-      if (!id) return;
-      const found = items.find((it) => it.id === id);
-      if (found) {
-        setSelectedItem(found);
-        setIsPopupOpen(true);
-      }
-    };
-    const onDoubleClick = (ev) => {
-      if (!ev.item) setIsPopupCreateOpen(true);
-    };
-    const onAnyChange = () => requestAnimationFrame(adjustItemAlignment);
-
-    timeline.on('select', onSelect);
-    timeline.on('doubleClick', onDoubleClick);
-    timeline.on('rangechange', onAnyChange);
-    timeline.on('rangechanged', onAnyChange);
-    timeline.on('changed', onAnyChange);
-
-    requestAnimationFrame(adjustItemAlignment);
-    const onResize = () => requestAnimationFrame(adjustItemAlignment);
-    window.addEventListener('resize', onResize);
-
-    return () => {
-      window.removeEventListener('resize', onResize);
-      timeline.destroy();
-      timelineRef.current = null;
-    };
-  }, [items]);
-
-  //console.log("items",items);
-//  console.log("json",Json);
+useEffect(() => {
+  getTimelineList(email).then((data) => {
+    console.log('Liste des timelines:', data);
+  })},
+   []); 
 
 
-  const handleClosePopup = () => {
-    setIsPopupOpen(false);
-    setIsPopupCreateOpen(false);
-    setSelectedItem(null);
-  };
+  const userTimelines = [
+    { id: 1, name: 'Voyage au Japon' },
+    { id: 2, name: 'Projet ISEN' },
+  ];
 
-  const refreshTimeline = async () => {
-    try {
-      const updated = await getTimeline(email, table.current);
-      setItems(updated?.data ?? []);
-      requestAnimationFrame(adjustItemAlignment);
-    } catch (e) {
-      console.error('Erreur maj timeline:', e);
-    }
-  };
+  const sharedTimelines = [{ id: 3, name: 'Timeline Groupe' }];
+
+  const publicTimelines = [
+    { id: 4, name: 'Histoire de l’Art' },
+    { id: 5, name: 'Évolution du Cinéma' },
+  ];
 
   return (
-    <PageWrapper>
-      <GlobalTimelineStyle />
+    <Page>
+      <Banner>
+        <div>TimeFlow</div>
+        <Button onClick={() => navigate('/timeline/new')}>+ Créer une timeline</Button>
+      </Banner>
 
-      <TimelineWrapper>
-        <TimelineContainer ref={container} />
-      </TimelineWrapper>
+      <Section>
+        <SectionTitle>Vos timelines</SectionTitle>
+        <Row>
+          <Card onClick={() => navigate('/timeline/new')}>+</Card>
+          {userTimelines.map((t) => (
+            <Card key={t.id} onClick={() => navigate(`/timeline/${t.id}`)}>
+              {t.name}
+            </Card>
+          ))}
 
-      {isPopupOpen && selectedItem && (
-        <PopupScreen
-          onClose={handleClosePopup}
-          item={selectedItem}
-          onRefresh={refreshTimeline}
-        />
-      )}
+        </Row>
+      </Section>
 
-      {isPopupCreateOpen && (
-        <PopupCreateScreen
-          onClose={handleClosePopup}
-          item={selectedItem}
-          table={table.current}
-          onRefresh={refreshTimeline}
-        />
-      )}
-    </PageWrapper>
+      <Section>
+        <SectionTitle>Timelines partagées</SectionTitle>
+        <Row>
+          {sharedTimelines.map((t) => (
+            <Card key={t.id}>{t.name}</Card>
+          ))}
+        </Row>
+      </Section>
+
+      <Section>
+        <SectionTitle>Timelines publiques</SectionTitle>
+        <Row>
+          {publicTimelines.map((t) => (
+            <Card key={t.id}>{t.name}</Card>
+          ))}
+        </Row>
+      </Section>
+    </Page>
   );
 };
 

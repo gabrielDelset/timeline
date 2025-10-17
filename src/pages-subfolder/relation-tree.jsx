@@ -5,7 +5,7 @@ import ProfileCard from "../component/caracter";
 import PopupCreateLink from "../component/popup-createlink";
 import { useAuth } from "../tools/AuthContext";
 import { v4 as uuid } from "uuid";
-import { SaveTreeEdges, SaveTreeNodes } from "../tools/API/api";
+import { SaveTreeEdges, SaveTreeNodes ,  getJsonLinksid} from "../tools/API/api";
 
 
 // ---------------- STYLED COMPONENTS (équivalents à Relation.css + Popup.css) ----------------
@@ -142,9 +142,8 @@ const RelationTree = ({ SetProfileList, item }) => {
   const [TextSize, setTextSize] = useState(24);
   const [TextDisable, setTextDisable] = useState("disable");
   const [legendLinks, setLegendLinks] = useState([]);
-  const { email, selectedLink } = useAuth();
   const [enable, setEnable] = useState(false);
-  const { personnesJsonList } = useAuth();  //on récupére les liens et les noodes ici 
+  const { email, personnesJsonList, setPersonnesJsonList , selectedLink } = useAuth();
   
 
 
@@ -174,66 +173,76 @@ console.log("found",found);
 
 
   const options = {
-    layout: { hierarchical: false },
-    edges: {
-      width: 4,
-      color: { color: "#92da9e", highlight: "#92da9e", hover: "#92da9e" },
-      length: 600,
-      arrows: { to: { enabled: false }, from: { enabled: false } },
-      font: { size: TextSize, multi: "html" },
+  layout: { hierarchical: false },
+  edges: {
+    width: 4,
+    color: { color: "#92da9e", highlight: "#92da9e", hover: "#92da9e" },
+    length: 400, // 🔹 un peu plus court, plus stable visuellement
+    arrows: { to: { enabled: false }, from: { enabled: false } },
+    font: { size: TextSize, multi: "html" },
+    smooth: { type: "continuous" } // 🔹 les liens suivent des courbes douces
+  },
+  nodes: {
+    shape: "circularImage",
+    borderWidth: 4,
+    size: 40, // 🔹 légèrement plus gros, meilleur repérage visuel
+    color: { border: "#222", background: "#666" },
+    font: { size: 22, color: "#000" },
+  },
+  interaction: {
+    hover: true,
+    dragNodes: true,
+    zoomView: true,
+    dragView: true,
+  },
+  physics: {
+    enabled: true,
+    stabilization: {
+      iterations: 250,
+      fit: true,
     },
-    nodes: {
-      shape: "circularImage",
-      borderWidth: 4,
-      size: 30,
-      color: { border: "#222222", background: "#666666" },
-      font: { size: 25, color: "#000000" },
+    solver: "forceAtlas2Based",
+    forceAtlas2Based: {
+      gravitationalConstant: -50,   // 🔹 repousse plus fort
+      centralGravity: 0.001,         // 🔹 attire beaucoup moins vers le centre
+      springLength: 350,             // 🔹 distance naturelle entre les nœuds
+      springConstant: 0.03,          // 🔹 moins de tension dans les liens
+      avoidOverlap: 1,               // 🔹 évite que les images se superposent
     },
-    interaction: { hover: true },
-    physics: {
-      enabled: true,
-      solver: "forceAtlas2Based",
-      forceAtlas2Based: {
-        gravitationalConstant: -80,
-        centralGravity: 0.005,
-        springLength: 250,
-        springConstant: 0.05,
-        avoidOverlap: 1,
-      },
-      stabilization: { iterations: 200, fit: true },
+  },
+  manipulation: {
+    enabled: true,
+    addEdge: (edgeData, callback) => {
+      if (selectedLink) {
+        edgeData.color = {
+          color: selectedLink.color,
+          highlight: selectedLink.color,
+          hover: selectedLink.color,
+        };
+        edgeData.length = selectedLink.length;
+        edgeData.label = `<b>${selectedLink.name}</b>`;
+      }
+      edgeData.id = uuid();
+      setEdges((prev) => [...prev, edgeData]);
+      callback(null);
     },
-    manipulation: {
-      enabled: true,
-      addEdge: (edgeData, callback) => {
-        if (selectedLink) {
-          edgeData.color = {
-            color: selectedLink.color,
-            highlight: selectedLink.color,
-            hover: selectedLink.color,
-          };
-          edgeData.length = selectedLink.length;
-          edgeData.label = `<b>${selectedLink.name}</b>`;
-        }
-        edgeData.id = uuid();
-        setEdges((prev) => [...prev, edgeData]);
-        callback(null);
-      },
-      addNode: false,
-      deleteEdge: (data, callback) => {
-        setEdges((prev) => prev.filter((e) => !data.edges.includes(e.id)));
-        callback(data);
-      },
-      deleteNode: (data, callback) => {
-        setNodes((prev) => prev.filter((n) => !data.nodes.includes(n.id)));
-        setEdges((prev) =>
-          prev.filter(
-            (e) => !data.nodes.includes(e.from) && !data.nodes.includes(e.to)
-          )
-        );
-        callback(data);
-      },
+    addNode: false,
+    deleteEdge: (data, callback) => {
+      setEdges((prev) => prev.filter((e) => !data.edges.includes(e.id)));
+      callback(data);
     },
-  };
+    deleteNode: (data, callback) => {
+      setNodes((prev) => prev.filter((n) => !data.nodes.includes(n.id)));
+      setEdges((prev) =>
+        prev.filter(
+          (e) => !data.nodes.includes(e.from) && !data.nodes.includes(e.to)
+        )
+      );
+      callback(data);
+    },
+  },
+};
+
 
   const events = {
     selectNode: ({ nodes: [id] }) => {
@@ -272,11 +281,42 @@ console.log("found",found);
     }
   };
 
-  const SaveTree = async () => {
-    console.log(email);
+const SaveTree = async () => {
+  try {
+    console.log("Sauvegarde en cours pour", email, "ID", item.id);
+
+    // 🔹 1. Sauvegarde côté serveur
     await SaveTreeEdges(JSON.stringify(edges), email, item.id);
     await SaveTreeNodes(JSON.stringify(nodes), email, item.id);
-  };
+
+    // 🔹 2. Met à jour ton contexte local (sans recharger la page)
+    setPersonnesJsonList((prevList) => {
+      if (!prevList) return []; // au cas où il est null au départ
+
+      // Vérifie si l'id existe déjà
+      const exists = prevList.some((el) => Number(el.id) === Number(item.id));
+
+      if (exists) {
+        // Met à jour le bon élément
+        return prevList.map((el) =>
+          Number(el.id) === Number(item.id)
+            ? { ...el, personnes: nodes, liens: edges }
+            : el
+        );
+      } else {
+        // Sinon, ajoute un nouveau groupe
+        return [
+          ...prevList,
+          { id: item.id, personnes: nodes, liens: edges }
+        ];
+      }
+    });
+
+    console.log(" Données locales mises à jour pour l’ID", item.id);
+  } catch (err) {
+    console.error(" Erreur lors de la sauvegarde :", err);
+  }
+};
 
   const handleDisableText = () => {
     if (enable) {
